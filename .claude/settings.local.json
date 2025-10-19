@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(dir)",
+      "Bash(npm install -D tailwindcss postcss autoprefixer)",
+      "Bash(npx tailwindcss init -p)",
+      "Bash(npm install zustand)",
+      "Bash(npm install -D vitest jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event @vitest/ui)",
+      "Bash(npm install -D @playwright/test)",
+      "Bash(git add .)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: setup iniziale progetto Classroom Management Tool\n\n- Inizializzato progetto Tauri 2.x con React 19 e TypeScript\n- Configurato Tailwind CSS per styling\n- Installato Zustand per state management\n- Configurato Vitest + React Testing Library + Playwright\n- Creata struttura cartelle completa (components, hooks, stores, services, tests)\n- Abilitato TypeScript strict mode con opzioni aggiuntive\n- Configurato .gitignore\n\nStack: Tauri 2.x + React 19 + TypeScript + Vite + Tailwind + Zustand\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(npm run build)",
+      "Bash(npm install -D @tailwindcss/postcss)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,195 @@
+# Come Usare con Claude Code - Guida Rapida
+
+## Setup Iniziale
+
+```bash
+# 1. Verifica prerequisiti
+node --version    # >= 18
+rustc --version   # Rust installato
+
+# 2. Crea progetto
+npm create tauri-app@latest classroom-management-tool
+cd classroom-management-tool
+npm install
+
+# 3. Test
+npm run tauri dev
+```
+
+## Workflow per Ogni Fase
+
+### Template Prompt Standard
+
+```
+Leggi @PROJECT_PLAN.md - quale fase è la prossima NON INIZIATA?
+
+Leggi anche:
+- @CLAUDE.md per regole
+- @docs/technical-spec.md per dettagli feature
+- @docs/edge-cases.md per edge cases fase
+
+Implementa SOLO quella fase.
+
+PROCESSO:
+1. Think hard → piano dettagliato
+2. Mostra piano e aspetta conferma
+3. Implementa + **test INSIEME**
+4. Verifica test passano (npm test)
+5. Aggiorna PROJECT_PLAN.md ✅
+6. Commit
+7. Summary
+
+REGOLE CRITICHE:
+- TypeScript strict (no 'any')
+- AudioContext singleton se audio
+- Test coverage >70%
+- Una fase alla volta
+```
+
+### Per Task Complessi (es. Fase 4 Audio, Fase 5 Noise)
+
+```
+@PROJECT_PLAN.md - FASE [N]
+
+Leggi @docs/technical-spec.md sezione "[Feature]"
+Leggi @docs/edge-cases.md per EC-XXX
+
+ULTRATHINK:
+1. Approccio migliore
+2. Architettura (hooks, services, stores)
+3. Edge cases da gestire
+4. Test strategy
+
+ASPETTO ANALISI PRIMA DI CODICE.
+
+Stack: Tauri + React + TypeScript + Zustand
+Testing: Vitest (coverage >70%)
+```
+
+## Comandi Utili
+
+```bash
+# Development
+npm run tauri dev    # Dev con hot reload
+npm test            # Unit tests
+npm test -- --coverage  # Con coverage
+npx playwright test     # E2E tests
+
+# Debug
+/model              # Vedere modello corrente
+/clear              # Reset contesto
+/output-style detailed  # Output verbose
+```
+
+## Troubleshooting
+
+### Claude si perde?
+```
+/clear
+
+Stack: Tauri + React + TypeScript strict + Zustand
+Testing: Obbligatorio (>70%)
+AudioContext: SINGLETON
+
+Leggi @CLAUDE.md e @PROJECT_PLAN.md
+Dimmi: fase corrente? task completati? next?
+```
+
+### Errori TypeScript?
+```
+Fix TS errors. Strict mode attivo.
+- No 'any'
+- Tutti props tipizzati
+- Import types: import type { ... }
+```
+
+### AudioContext issues?
+```
+CRITICAL CHECK:
+1. Singleton pattern: solo getInstance()?
+2. Nessun new AudioContext() altrove?
+3. Test verifica instance1 === instance2?
+```
+
+## Best Practices
+
+### ✅ FAI
+- Una fase alla volta
+- Test insieme al codice
+- TypeScript strict
+- AudioContext singleton
+- Commit frequenti
+- Usa `/clear` tra fasi
+
+### ❌ NON FARE
+- Saltare fasi
+- `any` in TypeScript
+- Multiple AudioContext
+- Skip test
+- HTML5 audio (usa Web Audio API)
+
+## Testing Strategy
+
+### Unit Tests
+```typescript
+// tests/unit/useTimer.test.ts
+import { renderHook, act } from '@testing-library/react';
+import { useTimer } from '@/hooks/useTimer';
+
+describe('useTimer', () => {
+  it('should start timer', () => {
+    const { result } = renderHook(() => useTimer());
+    act(() => result.current.start(60));
+    expect(result.current.isRunning).toBe(true);
+  });
+});
+```
+
+### Integration Tests
+```typescript
+// tests/integration/timer-audio.test.tsx
+test('timer end → audio plays', async () => {
+  render(<App />);
+  // Set timer 1 sec, wait, verify audio
+});
+```
+
+### E2E Tests
+```typescript
+// tests/e2e/lesson.spec.ts
+test('complete lesson', async ({ page }) => {
+  // Full user scenario
+});
+```
+
+## Esempio Sessione Completa
+
+```bash
+claude
+
+# Tu:
+@PROJECT_PLAN.md - implementa FASE 4: Audio
+
+@docs/technical-spec.md sezione "Audio"
+@docs/edge-cases.md: EC-005, EC-008
+
+CRITICAL: AudioContext singleton
+
+ULTRATHINK e proponi architettura.
+
+# Claude: [piano dettagliato]
+# Tu: "Procedi"
+# Claude: [implementa + test]
+# Claude: "Fase 4 ✅ Coverage 78%"
+# Tu: "/clear"
+```
+
+## Riferimenti
+- Tauri: https://tauri.app/v1/guides/
+- React: https://react.dev/
+- Vitest: https://vitest.dev/
+- Playwright: https://playwright.dev/
+
+---
+
+**Prossimo Step**: Inizia Fase 1 con `claude`!
