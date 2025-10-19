@@ -66,7 +66,7 @@ Inizializzare progetto Tauri con struttura base funzionante.
 ## FASE 2: Window Management & Theme System ✅ COMPLETATA
 
 ### Obiettivo
-Implementare sistema temi e layout principale con navigation.
+Implementare sistema temi e layout principale con navigation + window management (normal/overlay/fullscreen).
 
 ### Task
 - [x] 2.1 - Tauri.conf.json già configurato (FASE 1)
@@ -78,21 +78,29 @@ Implementare sistema temi e layout principale con navigation.
 - [x] 2.7 - Tailwind configurato con CSS variables per temi
 - [x] 2.8 - Settings tab con ThemeSelector completo
 - [x] 2.9 - Utility window positioning per gestire EC-002 (finestre fuori schermo)
+- [x] 2.10 - Window Mode types e store (normal/overlay/fullscreen) con Zustand + persistence
+- [x] 2.11 - Custom TitleBar con drag region e window controls (minimize/maximize/close)
+- [x] 2.12 - Hook useWindowMode con toggle modes e helper methods
+- [x] 2.13 - Settings: Window Mode selector (3 cards interattive)
+- [x] 2.14 - Tauri permissions per window controls (decorations, minimize, maximize)
+- [x] 2.15 - Test window modes funzionanti (normal 1200x800, overlay 400x600 always-on-top, fullscreen) ✅
 
 ### Risultati
-- 6 temi completi: Blue Serenity (default), Forest Mist, Twilight, Vibrant Studio, Electric Blue, Sunset Energy
-- ThemeProvider + ThemeSelector UI funzionanti
-- Theme persistence su localStorage
+- **Theme System**: 6 temi completi (Blue Serenity default, Forest Mist, Twilight, Vibrant Studio, Electric Blue, Sunset Energy)
+- **Window Management**: 3 modalità finestra (Normal, Overlay, Fullscreen) con transizioni fluide
+- **Custom TitleBar**: Drag region, window controls nativi (minimize/maximize/close)
+- **Settings UI**: ThemeSelector + WindowModeSelector con cards interattive
+- Theme + WindowMode persistence su localStorage
 - Layout responsive con tabs navigation
 - Window positioning utilities (EC-002) pronte per floating windows
 - Build size: ~209KB JS, ~8KB CSS
-- App Tauri funzionante e testata ✅
+- App Tauri completamente funzionante e testata ✅
 
 ### Edge Cases Gestiti
 - ✅ EC-002: Windows outside screen bounds (utility implementata)
 - ⚠️ EC-013: Floating windows overlap (rimandato a fasi successive)
 
-### Tempo Effettivo: ~1 giorno
+### Tempo Effettivo: ~1.5 giorni
 
 ---
 
@@ -345,7 +353,7 @@ Implementare suite test completa.
 
 ### Progress Generale
 - **Fasi Completate**: 2 / 15 (13.3%)
-- **Task Completati**: ~18 / ~140 (12.9%)
+- **Task Completati**: ~24 / ~145 (16.6%)
 - **Test Coverage**: 0% (target: >70%) - Testing da FASE 3 in poi
 - **Bundle Size**: 0.21 MB JS + 0.008 MB CSS = ~0.22 MB (target: <20MB) ✅
 - **Edge Cases Gestiti**: 1 / 15 (EC-002 implementato)

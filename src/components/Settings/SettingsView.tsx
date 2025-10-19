@@ -4,8 +4,11 @@
  */
 
 import { ThemeSelector } from './ThemeSelector';
+import { useWindowMode } from '../../hooks/useWindowMode';
 
 export function SettingsView() {
+  const { mode, setNormal, setOverlay, setFullscreen } = useWindowMode();
+
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
@@ -18,6 +21,42 @@ export function SettingsView() {
           Customize your Classroom Management Tool experience
         </p>
       </div>
+
+      {/* Window Mode Section */}
+      <section>
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
+            Window Mode
+          </h2>
+          <p className="text-[var(--text-secondary)]">
+            Choose how you want the application window to behave
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <WindowModeCard
+            title="Normal Mode"
+            description="Standard window with full controls and resizing"
+            icon="🖼️"
+            isActive={mode === 'normal'}
+            onClick={setNormal}
+          />
+          <WindowModeCard
+            title="Overlay Mode"
+            description="Always on top, smaller window for use alongside other apps"
+            icon="📌"
+            isActive={mode === 'overlay'}
+            onClick={setOverlay}
+          />
+          <WindowModeCard
+            title="Fullscreen Mode"
+            description="Full screen for presentations and classroom displays"
+            icon="⛶"
+            isActive={mode === 'fullscreen'}
+            onClick={setFullscreen}
+          />
+        </div>
+      </section>
 
       {/* Theme Section */}
       <section>
@@ -98,5 +137,56 @@ function SettingItem({ icon, title, description, comingSoon }: SettingItemProps)
         </span>
       )}
     </div>
+  );
+}
+
+interface WindowModeCardProps {
+  title: string;
+  description: string;
+  icon: string;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+function WindowModeCard({
+  title,
+  description,
+  icon,
+  isActive,
+  onClick,
+}: WindowModeCardProps) {
+  return (
+    <button
+      onClick={onClick}
+      className={`
+        group relative overflow-visible rounded-lg p-8 text-left transition-all w-full
+        ${
+          isActive
+            ? 'ring-4 ring-[var(--color-primary)] scale-105 shadow-xl bg-[var(--bg-surface)]'
+            : 'ring-1 ring-[var(--bg-elevated)] hover:ring-2 hover:ring-[var(--color-secondary)] hover:scale-102 bg-[var(--bg-surface)]'
+        }
+      `}
+      aria-label={`Switch to ${title}`}
+      aria-pressed={isActive}
+    >
+      {/* Icon */}
+      <div className="text-4xl mb-3">{icon}</div>
+
+      {/* Title */}
+      <h3 className="font-semibold text-lg mb-2 text-[var(--text-primary)]">
+        {title}
+      </h3>
+
+      {/* Description */}
+      <p className="text-sm text-[var(--text-secondary)]">{description}</p>
+
+      {/* Active Badge */}
+      {isActive && (
+        <div className="flex items-center gap-2 text-sm text-[var(--color-primary)] font-medium mt-3">
+          <span>✓</span>
+          <span>Active</span>
+        </div>
+      )}
+    </button>
   );
 }

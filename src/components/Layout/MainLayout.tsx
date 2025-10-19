@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import type { TabId } from '../../types/layout.types';
 import { TabBar } from './TabBar';
+import { TitleBar } from './TitleBar';
 import { SettingsView } from '../Settings/SettingsView';
 
 export function MainLayout() {
@@ -13,6 +14,9 @@ export function MainLayout() {
 
   return (
     <div className="flex flex-col h-screen bg-[var(--bg-primary)]">
+      {/* Custom Title Bar */}
+      <TitleBar />
+
       {/* Tab Bar */}
       <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
 
