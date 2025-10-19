@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { expect, afterEach } from 'vitest';
+import { afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
 // Cleanup dopo ogni test
@@ -8,7 +8,7 @@ afterEach(() => {
 });
 
 // Mock dell'AudioContext per i test
-global.AudioContext = class MockAudioContext {
+(globalThis as any).AudioContext = class MockAudioContext {
   createGain() {
     return {
       gain: { value: 1 },

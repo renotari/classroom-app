@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "classroom-management-tool",
+  "productName": "Classroom Management Tool",
   "version": "0.1.0",
-  "identifier": "com.renot.classroom-management-tool",
+  "identifier": "com.classroom.management",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,14 +12,22 @@
   "app": {
     "windows": [
       {
-        "title": "classroom-management-tool",
-        "width": 800,
-        "height": 600
+        "title": "Classroom Management Tool",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "alwaysOnTop": false,
+        "decorations": true,
+        "transparent": false
       }
     ],
     "security": {
       "csp": null
-    }
+    },
+    "withGlobalTauri": true
   },
   "bundle": {
     "active": true,
