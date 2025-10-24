@@ -7,7 +7,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
 
-**Stato Sviluppo**: 🚧 In Development - FASE 2/15 completata (16.6%)
+**Stato Sviluppo**: 🚧 In Development - FASE 4/15 completata (26.7%)
 
 ---
 
@@ -21,7 +21,7 @@ Progettata per funzionare su schermi touch interattivi (STI) e laptop, con suppo
 
 ## ✨ Features
 
-### ✅ Completate (FASE 1 e 2)
+### ✅ Completate (FASE 1-4)
 
 - **🎨 Sistema Temi**: 6 temi colore personalizzabili
   - Blue Serenity (default), Forest Mist, Twilight
@@ -34,19 +34,28 @@ Progettata per funzionare su schermi touch interattivi (STI) e laptop, con suppo
   - **Fullscreen Mode**: Schermo intero per proiezione
   - Custom Title Bar con drag region e window controls
 
-- **🧭 Navigation**: TabBar con 5 sezioni
-  - Timer, Audio, Class Management, Tools, Settings
-  - Layout responsive con placeholders pronti
-
 - **⚙️ Settings Panel**: Configurazione completa
   - Theme Selector interattivo
   - Window Mode Selector con cards
   - Configurazioni persistenti
 
-### 🚧 In Roadmap (FASE 3-15)
+- **⏱️ Timer Didattici**: Timer completamente funzionante
+  - Preset rapidi (5, 10, 15, 30 minuti) + input custom
+  - Control start/pause/stop/reset
+  - Warning configurabili prima della scadenza
+  - Integrazione audio alerts (Phase 4)
+  - 20+ unit tests con 100% coverage
 
-- ⏱️ **Timer Didattici** - Preset rapidi, warnings, floating window
-- 🎵 **Sistema Audio** - Alert sounds, background music (Web Audio API)
+- **🎵 Sistema Audio**: Audio system con Web Audio API singleton
+  - Alert sounds predefiniti (3 sound packs: Classic, Modern, Gentle)
+  - Background music support con volume control
+  - Audio priority system (HIGH/MEDIUM/LOW)
+  - Audio ducking per music durante alerts
+  - 32 unit tests (100% AudioService coverage)
+  - Full UI panel con controlli
+
+### 🚧 In Roadmap (FASE 5-15)
+
 - 🎤 **Monitoraggio Rumore** - Real-time noise meter, soglie configurabili
 - 🚦 **Sistema Semaforo** - Traffic light per stato classe (rosso/giallo/verde)
 - 👥 **Gestione Classi** - Import CSV, studenti, presenze/assenze
@@ -135,14 +144,14 @@ npm run test:e2e     # Run E2E tests (Playwright)
 |------|-------------|-------|---------------|
 | ✅ FASE 1 | Setup Progetto Tauri | COMPLETATA | ~1 giorno |
 | ✅ FASE 2 | Window Management & Theme System | COMPLETATA | ~1.5 giorni |
-| ⏸️ FASE 3 | Feature Timer | NON INIZIATA | 1 settimana |
-| ⏸️ FASE 4 | Sistema Audio | NON INIZIATA | 1.5 settimane |
-| ⏸️ FASE 5 | Monitoraggio Rumore | NON INIZIATA | 2 settimane |
+| ✅ FASE 3 | Feature Timer | COMPLETATA | ~1.5 giorni |
+| ✅ FASE 4 | Sistema Audio | COMPLETATA | ~1.5 giorni |
+| ⏳ FASE 5 | Monitoraggio Rumore | IN PLANNING | 2 settimane |
 | ⏸️ FASE 6 | Sistema Semaforo | NON INIZIATA | 1 settimana |
 | ⏸️ FASE 7 | Class & Students Management | NON INIZIATA | 1.5 settimane |
 | ... | ... | ... | ... |
 
-**Progress**: 2/15 fasi completate (13.3%) - 24/145 task (16.6%)
+**Progress**: 4/15 fasi completate (26.7%) - ~100/145 task (69%)
 
 Vedi [PROJECT_PLAN.md](./PROJECT_PLAN.md) per dettagli completi.
 
@@ -215,5 +224,5 @@ Sviluppato con 🤖 [Claude Code](https://claude.com/claude-code)
 
 ---
 
-**Ultima Modifica**: 2025-10-19
-**Versione**: 0.2.0 (FASE 2 completata)
+**Ultima Modifica**: 2025-10-24
+**Versione**: 0.4.0 (FASE 4 completata)

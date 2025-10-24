@@ -73,7 +73,49 @@ export function SettingsView() {
         <ThemeSelector />
       </section>
 
-      {/* Placeholder for future settings */}
+      {/* Audio Settings - FASE 4 */}
+      {FEATURE_FLAGS.audioSystem && (
+        <section>
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
+              Audio Settings
+            </h2>
+            <p className="text-[var(--text-secondary)]">
+              Configure volume and sound preferences
+            </p>
+          </div>
+          {/* TODO: FASE 4 - Implement audio settings UI */}
+          <SettingItem
+            icon="🔊"
+            title="Audio Settings"
+            description="Configure default volumes and sound preferences"
+            comingSoon
+          />
+        </section>
+      )}
+
+      {/* Microphone Settings - FASE 5 */}
+      {FEATURE_FLAGS.noiseMonitoring && (
+        <section>
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
+              Microphone Settings
+            </h2>
+            <p className="text-[var(--text-secondary)]">
+              Adjust noise monitoring sensitivity and thresholds
+            </p>
+          </div>
+          {/* TODO: FASE 5 - Implement noise monitoring settings UI */}
+          <SettingItem
+            icon="🎤"
+            title="Microphone Settings"
+            description="Adjust noise monitoring sensitivity and thresholds"
+            comingSoon
+          />
+        </section>
+      )}
+
+      {/* Placeholder for future settings not yet assigned to phases */}
       {!FEATURE_FLAGS.audioSystem &&
         !FEATURE_FLAGS.noiseMonitoring &&
         !FEATURE_FLAGS.classManagement && (
@@ -88,20 +130,6 @@ export function SettingsView() {
             </div>
 
             <div className="space-y-4">
-              {/* TODO: FASE 4 - Audio System settings */}
-              <SettingItem
-                icon="🔊"
-                title="Audio Settings"
-                description="Configure default volumes and sound preferences"
-                comingSoon
-              />
-              {/* TODO: FASE 5 - Noise Monitoring settings */}
-              <SettingItem
-                icon="🎤"
-                title="Microphone Settings"
-                description="Adjust noise monitoring sensitivity and thresholds"
-                comingSoon
-              />
               {/* TODO: Phase future - Keyboard shortcuts */}
               <SettingItem
                 icon="⌨️"

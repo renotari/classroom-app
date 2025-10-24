@@ -2,11 +2,29 @@
  * Feature Flags Configuration
  * Centralizes feature availability based on development phase
  * FASE mapping reference: PROJECT_PLAN.md
+ *
+ * FEATURE FLAG SEMANTICS:
+ * - A phase/feature is marked COMPLETE (true) when:
+ *   1. All required features are fully implemented
+ *   2. All unit tests are passing (>70% coverage)
+ *   3. All edge cases for that phase are handled
+ *   4. No placeholder components remain in the feature
+ *   5. Ready for integration with other phases
+ *
+ * - Sub-flags (e.g., timerPresets, timerWarnings) allow granular control
+ *   within a phase if some features complete before others
+ *
+ * UPDATE PROCESS:
+ * 1. Set phase flag to true ONLY after ALL sub-features complete
+ * 2. Update PROJECT_PLAN.md phase status
+ * 3. Update README.md roadmap table
+ * 4. Run full test suite before commit
+ * 5. Commit with message: "feat: complete FASE X - [description]"
  */
 
 /**
  * Feature flags for phased development
- * Set to true when phase is implemented and ready
+ * Set to true when phase is FULLY IMPLEMENTED and ready for integration
  */
 export const FEATURE_FLAGS = {
   // FASE 1: Setup ✅ COMPLETATA
