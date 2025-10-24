@@ -50,7 +50,10 @@ export function useTimer(callbacks?: TimerCallbacks) {
 
   // Ref per callbacks (evita re-creazione interval ad ogni callback change)
   const callbacksRef = useRef<TimerCallbacks | undefined>(callbacks);
-  callbacksRef.current = callbacks;
+
+  useEffect(() => {
+    callbacksRef.current = callbacks;
+  }, [callbacks]);
 
   // Ref per tracciare completion già emesso
   const completionEmittedRef = useRef(false);

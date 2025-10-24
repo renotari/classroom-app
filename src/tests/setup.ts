@@ -8,6 +8,7 @@ afterEach(() => {
 });
 
 // Mock dell'AudioContext per i test
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).AudioContext = class MockAudioContext {
   createGain() {
     return {
@@ -52,6 +53,7 @@ afterEach(() => {
   resume() {
     return Promise.resolve();
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 // Mock del MediaDevices per noise monitoring

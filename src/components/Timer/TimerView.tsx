@@ -46,6 +46,7 @@ export const TimerView: React.FC = () => {
    */
   useEffect(() => {
     if (timer.status === 'idle') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWarning(false);
     }
   }, [timer.status]);
