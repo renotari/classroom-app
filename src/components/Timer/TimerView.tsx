@@ -5,6 +5,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useTimer } from '../../hooks/useTimer';
+import { useAudioService } from '../../hooks/useAudioService';
 import { TimerDisplay } from './TimerDisplay';
 import { TimerControls } from './TimerControls';
 import { TimerPresets } from './TimerPresets';
@@ -16,6 +17,9 @@ export const TimerView: React.FC = () => {
   const [showWarning, setShowWarning] = useState(false);
   const isMountedRef = useRef(true);
   const warningTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Audio service for playing alert sounds when timer completes
+  const audioService = useAudioService();
 
   // Inizializza hook con callbacks
   const timer = useTimer({
@@ -33,11 +37,16 @@ export const TimerView: React.FC = () => {
         }
       }, 3000);
     },
-    onComplete: () => {
+    onComplete: async () => {
       // Guard: non eseguire callback se component è unmounted
       if (!isMountedRef.current) return;
 
-      // Timer finito - potrebbe triggerare audio (FASE 4)
+      // Timer finito - triggerato audio alert (FASE 4)
+      try {
+        await audioService.playAlert('timerEnd');
+      } catch (error) {
+        console.error('[TimerView] Error playing timer alert:', error);
+      }
     },
   });
 

@@ -9,6 +9,7 @@ import { TabBar } from './TabBar';
 import { TitleBar } from './TitleBar';
 import { SettingsView } from '../Settings/SettingsView';
 import { TimerView } from '../Timer/TimerView';
+import { AudioPanel } from '../Audio/AudioPanel';
 
 export function MainLayout() {
   const [activeTab, setActiveTab] = useState<TabId>('timer');
@@ -37,27 +38,13 @@ function TabContent({ activeTab }: TabContentProps) {
   // Placeholder components - verranno sostituiti nelle fasi successive
   const content = {
     timer: <TimerView />,
-    audio: <AudioPlaceholder />,
+    audio: <AudioPanel />,
     class: <ClassPlaceholder />,
     tools: <ToolsPlaceholder />,
     settings: <SettingsPlaceholder />,
   };
 
   return content[activeTab];
-}
-
-// Placeholder components - temporanei
-
-function AudioPlaceholder() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-4">
-      <span className="text-6xl">🎵</span>
-      <h2 className="text-3xl font-bold text-[var(--text-primary)]">Audio</h2>
-      <p className="text-[var(--text-secondary)]">
-        Audio module will be implemented in Phase 4
-      </p>
-    </div>
-  );
 }
 
 function ClassPlaceholder() {
