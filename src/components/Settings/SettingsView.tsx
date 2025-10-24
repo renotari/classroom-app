@@ -5,6 +5,7 @@
 
 import { ThemeSelector } from './ThemeSelector';
 import { useWindowMode } from '../../hooks/useWindowMode';
+import { FEATURE_FLAGS } from '../../config/features';
 
 export function SettingsView() {
   const { mode, setNormal, setOverlay, setFullscreen } = useWindowMode();
@@ -73,43 +74,51 @@ export function SettingsView() {
       </section>
 
       {/* Placeholder for future settings */}
-      <section className="opacity-50">
-        <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
-            Other Settings
-          </h2>
-          <p className="text-[var(--text-secondary)]">
-            Additional settings will be added in future phases
-          </p>
-        </div>
+      {!FEATURE_FLAGS.audioSystem &&
+        !FEATURE_FLAGS.noiseMonitoring &&
+        !FEATURE_FLAGS.classManagement && (
+          <section className="opacity-50">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
+                Other Settings
+              </h2>
+              <p className="text-[var(--text-secondary)]">
+                Additional settings will be added in future phases
+              </p>
+            </div>
 
-        <div className="space-y-4">
-          <SettingItem
-            icon="🔊"
-            title="Audio Settings"
-            description="Configure default volumes and sound preferences"
-            comingSoon
-          />
-          <SettingItem
-            icon="🎤"
-            title="Microphone Settings"
-            description="Adjust noise monitoring sensitivity and thresholds"
-            comingSoon
-          />
-          <SettingItem
-            icon="⌨️"
-            title="Keyboard Shortcuts"
-            description="Customize hotkeys for quick actions"
-            comingSoon
-          />
-          <SettingItem
-            icon="💾"
-            title="Data & Storage"
-            description="Manage saved classes, groups, and preferences"
-            comingSoon
-          />
-        </div>
-      </section>
+            <div className="space-y-4">
+              {/* TODO: FASE 4 - Audio System settings */}
+              <SettingItem
+                icon="🔊"
+                title="Audio Settings"
+                description="Configure default volumes and sound preferences"
+                comingSoon
+              />
+              {/* TODO: FASE 5 - Noise Monitoring settings */}
+              <SettingItem
+                icon="🎤"
+                title="Microphone Settings"
+                description="Adjust noise monitoring sensitivity and thresholds"
+                comingSoon
+              />
+              {/* TODO: Phase future - Keyboard shortcuts */}
+              <SettingItem
+                icon="⌨️"
+                title="Keyboard Shortcuts"
+                description="Customize hotkeys for quick actions"
+                comingSoon
+              />
+              {/* TODO: Phase future - Data & Storage management */}
+              <SettingItem
+                icon="💾"
+                title="Data & Storage"
+                description="Manage saved classes, groups, and preferences"
+                comingSoon
+              />
+            </div>
+          </section>
+        )}
     </div>
   );
 }

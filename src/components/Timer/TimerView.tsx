@@ -3,7 +3,7 @@
  * Container principale che integra TimerDisplay, Controls, e Presets
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useTimer } from '../../hooks/useTimer';
 import { TimerDisplay } from './TimerDisplay';
 import { TimerControls } from './TimerControls';
@@ -14,17 +14,29 @@ import { TimerPresets } from './TimerPresets';
  */
 export const TimerView: React.FC = () => {
   const [showWarning, setShowWarning] = useState(false);
+  const isMountedRef = useRef(true);
+  const warningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Inizializza hook con callbacks
   const timer = useTimer({
     onWarning: () => {
-      console.log('⚠️ Warning callback triggered');
+      // Guard: non eseguire callback se component è unmounted
+      if (!isMountedRef.current) return;
+
       setShowWarning(true);
       // Disabilita warning visuale dopo 3 secondi
-      setTimeout(() => setShowWarning(false), 3000);
+      // Cancella timeout precedente se esiste per evitare leak
+      if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
+      warningTimeoutRef.current = setTimeout(() => {
+        if (isMountedRef.current) {
+          setShowWarning(false);
+        }
+      }, 3000);
     },
     onComplete: () => {
-      console.log('✅ Timer completion callback triggered');
+      // Guard: non eseguire callback se component è unmounted
+      if (!isMountedRef.current) return;
+
       // Timer finito - potrebbe triggerare audio (FASE 4)
     },
   });
@@ -37,6 +49,19 @@ export const TimerView: React.FC = () => {
       setShowWarning(false);
     }
   }, [timer.status]);
+
+  /**
+   * Cleanup su unmount: evita memory leak da timeout e setState su unmounted component
+   * CRITICO per EC-004 (8+ ore uptime)
+   */
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      if (warningTimeoutRef.current) {
+        clearTimeout(warningTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col gap-8 p-6 md:p-8 overflow-y-auto">
