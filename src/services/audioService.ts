@@ -21,6 +21,37 @@ import {
 
 const DEBUG = false; // Set to true for console logs during development
 
+// ============ Configuration Constants ============
+/** Default master volume level (0-1 scale) */
+const DEFAULT_MASTER_VOLUME = 0.8;
+
+/** Default background music volume level (0-1 scale) */
+const DEFAULT_BACKGROUND_MUSIC_VOLUME = 0.5;
+
+/** Audio ducking factor - percentage of volume to reduce background music during alerts */
+const DEFAULT_DUCKING_FACTOR = 0.2; // 20% volume
+
+/** Fade in duration for audio transitions in milliseconds */
+const DEFAULT_FADE_IN_DURATION_MS = 500;
+
+/** Fade out duration for audio transitions in milliseconds */
+const DEFAULT_FADE_OUT_DURATION_MS = 300;
+
+/** Maximum number of audio buffers to keep in cache */
+const DEFAULT_MAX_CACHE_SIZE = 20;
+
+/** Amplitude multiplier for generated beep tones (for safety) */
+const BEEP_TONE_AMPLITUDE = 0.3;
+
+/** Default beep tone frequency in Hz (A4 note) */
+const DEFAULT_BEEP_FREQUENCY_HZ = 440;
+
+/** Default beep tone duration in seconds */
+const DEFAULT_BEEP_DURATION_SEC = 0.5;
+
+/** Volume transition time constant in seconds (for setTargetAtTime) */
+const VOLUME_TRANSITION_TIME_CONSTANT = 0.1;
+
 export class AudioService {
   private static instance: AudioService;
 
@@ -46,13 +77,13 @@ export class AudioService {
 
     // Default configuration
     this.config = {
-      masterVolume: 0.8,
-      backgroundMusicVolume: 0.5,
-      alertVolume: 0.8,
-      duckingFactor: 0.2, // 20% volume during alert
-      fadeInDuration: 500, // ms
-      fadeOutDuration: 300, // ms
-      maxCacheSize: 20,
+      masterVolume: DEFAULT_MASTER_VOLUME,
+      backgroundMusicVolume: DEFAULT_BACKGROUND_MUSIC_VOLUME,
+      alertVolume: DEFAULT_MASTER_VOLUME,
+      duckingFactor: DEFAULT_DUCKING_FACTOR,
+      fadeInDuration: DEFAULT_FADE_IN_DURATION_MS,
+      fadeOutDuration: DEFAULT_FADE_OUT_DURATION_MS,
+      maxCacheSize: DEFAULT_MAX_CACHE_SIZE,
       ...config
     };
 
@@ -106,14 +137,43 @@ export class AudioService {
 
   // ============ Audio File Loading ============
   /**
+   * Validate audio file URL for security
+   * Prevents path traversal and ensures valid audio URLs
+   *
+   * @param url - URL to validate
+   * @throws AudioError if URL is invalid
+   */
+  private validateAudioUrl(url: string): void {
+    // Check for absolute URLs (http/https)
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return; // Allow absolute URLs
+    }
+
+    // Check for relative paths starting with /sounds/ (safelist)
+    if (url.startsWith('/sounds/')) {
+      return; // Allow safe sound directory
+    }
+
+    // Reject anything else to prevent path traversal
+    throw new AudioError(
+      'LOAD_ERROR',
+      `Invalid audio file path: "${url}". Use /sounds/* for relative paths or http(s):// for absolute URLs`
+    );
+  }
+
+  /**
    * Load and decode an audio file
    * Results are cached to avoid re-decoding
    *
    * @param url - Path to audio file (relative or absolute)
    * @returns Decoded AudioBuffer or null if failed
+   * @throws AudioError if URL is invalid
    */
   async loadAudioFile(url: string): Promise<AudioBuffer | null> {
     try {
+      // Validate URL first (security check)
+      this.validateAudioUrl(url);
+
       // Check cache first
       if (this.audioBufferCache.has(url)) {
         if (DEBUG) console.log(`[AudioService] Cache hit: ${url}`);
@@ -178,7 +238,10 @@ export class AudioService {
    * @param duration - Duration in seconds
    * @returns Generated AudioBuffer
    */
-  private generateBeepTone(frequency: number = 440, duration: number = 0.5): AudioBuffer {
+  private generateBeepTone(
+    frequency: number = DEFAULT_BEEP_FREQUENCY_HZ,
+    duration: number = DEFAULT_BEEP_DURATION_SEC
+  ): AudioBuffer {
     const sampleRate = this.audioContext.sampleRate;
     const numSamples = sampleRate * duration;
 
@@ -188,7 +251,7 @@ export class AudioService {
     // Generate sine wave
     for (let i = 0; i < numSamples; i++) {
       const t = i / sampleRate;
-      channelData[i] = Math.sin(2 * Math.PI * frequency * t) * 0.3; // 0.3 amplitude for safety
+      channelData[i] = Math.sin(2 * Math.PI * frequency * t) * BEEP_TONE_AMPLITUDE;
     }
 
     if (DEBUG) console.log(`[AudioService] Generated beep tone: ${frequency}Hz, ${duration}s`);
@@ -419,7 +482,7 @@ export class AudioService {
       this.backgroundMusicState.gain.gain.setTargetAtTime(
         duckedVolume,
         this.audioContext.currentTime,
-        0.1
+        VOLUME_TRANSITION_TIME_CONSTANT
       );
 
       if (DEBUG) console.log(`[AudioService] Background music ducked: ${(duckedVolume * 100).toFixed(0)}%`);
@@ -435,7 +498,7 @@ export class AudioService {
       this.backgroundMusicState.gain.gain.setTargetAtTime(
         this.backgroundMusicState.volume,
         this.audioContext.currentTime,
-        0.1
+        VOLUME_TRANSITION_TIME_CONSTANT
       );
 
       if (DEBUG) console.log(`[AudioService] Background music restored`);

@@ -11,14 +11,14 @@ import { useAudioStore } from '../stores/audioStore';
 import { AudioCallbacks, AudioError } from '../types/audio.types';
 
 export const useAudioService = () => {
-  const {
-    alertEnabled,
-    alertVolume,
-    backgroundMusicEnabled,
-    backgroundMusicVolume,
-    duckingEnabled,
-    getAlertSoundUrl
-  } = useAudioStore();
+  // Use selective subscriptions to prevent unnecessary re-renders
+  // Each selector only subscribes to the specific state it needs
+  const alertEnabled = useAudioStore((state) => state.alertEnabled);
+  const alertVolume = useAudioStore((state) => state.alertVolume);
+  const backgroundMusicEnabled = useAudioStore((state) => state.backgroundMusicEnabled);
+  const backgroundMusicVolume = useAudioStore((state) => state.backgroundMusicVolume);
+  const duckingEnabled = useAudioStore((state) => state.duckingEnabled);
+  const getAlertSoundUrl = useAudioStore((state) => state.getAlertSoundUrl);
 
   /**
    * Play an alert sound with store configuration

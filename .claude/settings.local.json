@@ -14,7 +14,12 @@
       "Bash(npm install -D @tailwindcss/postcss)",
       "Bash(npm run test -- --version)",
       "Bash(rustc --version)",
-      "Bash(npm run test:*)"
+      "Bash(npm run test:*)",
+      "Bash(npm run lint)",
+      "Bash(npm install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix: resolve all ESLint errors and install test coverage dependency\n\n- Add fetch to ESLint globals in eslint.config.js (fixes no-undef error)\n- Add eslint-disable comments for intentionally unused catch parameters\n- Remove unnecessary eslint-disable directives in setup.ts\n- Install @vitest/coverage-v8@3.2.4 for test coverage reporting\n- All 3 critical ESLint errors now resolved ✅\n- Build passes clean with no warnings\n\nThis addresses the first 3 items from the code review:\n1. ✅ Fix ESLint errors (3 critical + 3 warnings)\n2. ✅ Install coverage dependency \n3. ✅ Verify build integrity\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(npm run test:coverage:*)"
     ],
     "deny": [],
     "ask": []
