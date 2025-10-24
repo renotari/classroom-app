@@ -52,7 +52,6 @@ afterEach(() => {
       length,
       sampleRate,
       numberOfChannels: channels,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       getChannelData: (_channel: number) => new Float32Array(length),
       copyFromChannel: () => {},
       copyToChannel: () => {},
@@ -78,7 +77,6 @@ afterEach(() => {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   decodeAudioData(_arrayBuffer: ArrayBuffer) {
     // Create a mock decoded audio buffer
     return Promise.resolve({
@@ -86,7 +84,6 @@ afterEach(() => {
       sampleRate: 44100,
       numberOfChannels: 1,
       duration: 1,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       getChannelData: (_channel: number) => new Float32Array(44100),
       copyFromChannel: () => {},
       copyToChannel: () => {},

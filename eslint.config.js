@@ -40,7 +40,8 @@ export default [
         setInterval: 'readonly',
         clearInterval: 'readonly',
         alert: 'readonly',
-        getComputedStyle: 'readonly'
+        getComputedStyle: 'readonly',
+        fetch: 'readonly'
       }
     },
     settings: {

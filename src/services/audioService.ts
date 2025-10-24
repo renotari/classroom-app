@@ -278,6 +278,7 @@ export class AudioService {
       try {
         this.currentAlertSource.stop();
         this.currentAlertSource.disconnect();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         // Already stopped, ignore
       }
@@ -357,6 +358,7 @@ export class AudioService {
       try {
         this.backgroundMusicState.source.stop();
         this.backgroundMusicState.source.disconnect();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         // Already stopped, ignore
       }
