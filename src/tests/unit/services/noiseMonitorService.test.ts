@@ -11,7 +11,7 @@
  * TODO: Implement tests when service is created in FASE 5
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe.skip('NoiseMonitorService', () => {
   // TODO: Implement NoiseMonitorService tests

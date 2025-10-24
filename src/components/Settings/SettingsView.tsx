@@ -1,9 +1,10 @@
 /**
  * SettingsView Component
- * Pannello impostazioni completo con ThemeSelector
+ * Pannello impostazioni completo con ThemeSelector e Audio Settings
  */
 
 import { ThemeSelector } from './ThemeSelector';
+import { AudioSettingsPanel } from './AudioSettingsPanel';
 import { useWindowMode } from '../../hooks/useWindowMode';
 import { FEATURE_FLAGS } from '../../config/features';
 
@@ -81,16 +82,10 @@ export function SettingsView() {
               Audio Settings
             </h2>
             <p className="text-[var(--text-secondary)]">
-              Configure volume and sound preferences
+              Configure volume, sound packs, and audio preferences
             </p>
           </div>
-          {/* TODO: FASE 4 - Implement audio settings UI */}
-          <SettingItem
-            icon="🔊"
-            title="Audio Settings"
-            description="Configure default volumes and sound preferences"
-            comingSoon
-          />
+          <AudioSettingsPanel />
         </section>
       )}
 

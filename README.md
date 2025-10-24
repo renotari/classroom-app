@@ -7,7 +7,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
 
-**Stato Sviluppo**: 🚧 In Development - FASE 4/15 completata (26.7%)
+**Stato Sviluppo**: 🚧 In Development - FASE 4/15 completata (26.7%) ✅ Audio System Done
 
 ---
 
@@ -149,7 +149,8 @@ npm run test:e2e     # Run E2E tests (Playwright)
 | ⏳ FASE 5 | Monitoraggio Rumore | IN PLANNING | 2 settimane |
 | ⏸️ FASE 6 | Sistema Semaforo | NON INIZIATA | 1 settimana |
 | ⏸️ FASE 7 | Class & Students Management | NON INIZIATA | 1.5 settimane |
-| ... | ... | ... | ... |
+| ⏸️ FASE 8 | Group Generation & Separation Rules | NON INIZIATA | 1.5 settimane |
+| ⏸️ FASE 9-15 | Points, Dice, Overlays, Floating Windows | NON INIZIATA | 4 settimane |
 
 **Progress**: 4/15 fasi completate (26.7%) - ~100/145 task (69%)
 

@@ -150,7 +150,7 @@ export const useClassStore = create<ClassStoreState>()(
         });
       },
 
-      importFromCSV: async (classId: string, csvText: string) => {
+      importFromCSV: async (_classId: string, _csvText: string) => {
         set({ importInProgress: true, importError: null });
         try {
           // TODO: Implement CSV parsing with Papaparse

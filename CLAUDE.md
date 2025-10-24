@@ -295,11 +295,63 @@ Quando implementi feature specifiche, referenzia:
 
 ### Quando Usare Rust Backend
 - **NON usare Rust** per: UI, state management, logica semplice
-- **Usare Rust** per: 
+- **Usare Rust** per:
   - Window management avanzato (overlay, always-on-top)
   - File system operations (CSV import/export, config save/load)
   - System tray integration (se necessario)
   - Performance-critical tasks (se Web Audio API non basta)
+
+### State Management Architecture - Zustand Stores
+
+**IMPORTANTE**: Stores sono PRE-SCAFFOLDED ma COMPLETAMENTE FUNZIONALI. Non aspettare di implementare il store prima di costruire UI.
+
+**Current Status**:
+- ✅ `timerStore.ts` - Fully implemented
+- ✅ `audioStore.ts` - Fully implemented (Phase 4 COMPLETATA)
+- ✅ `noiseStore.ts` - Scaffolded but functional (ready for Phase 5 UI)
+- ✅ `classStore.ts` - Scaffolded but functional (ready for Phase 7 UI)
+- ✅ `semaphoreStore.ts`, `groupsStore.ts`, `pointsStore.ts`, etc. - Ready
+
+**Implementation Pattern** (used in audioStore):
+```typescript
+export const useAudioStore = create<AudioStoreState>()(
+  persist(
+    (set, get) => ({
+      // State
+      selectedSoundPack: 'classic',
+      masterVolume: 0.8,
+
+      // Actions
+      setSoundPack: (key) => set({ selectedSoundPack: key }),
+      setMasterVolume: (vol) => set({ masterVolume: Math.max(0, Math.min(1, vol)) }),
+
+      // Getters
+      getCurrentSoundPack: () => SOUND_PACKS[get().selectedSoundPack]
+    }),
+    { name: 'audio-store' } // localStorage persistence
+  )
+);
+```
+
+**Workflow for Each Phase**:
+1. Store already exists and is functional
+2. Build UI component using store hooks
+3. Components use `useStore((state) => state.action)` pattern
+4. Don't refactor store later - use it from the start
+5. Tests cover store logic in unit tests, component usage in integration tests
+
+**Example - Phase 5 (Noise Monitoring)**:
+```typescript
+// NoiseMeterPanel.tsx already has access to store
+import { useNoiseStore } from '../../stores/noiseStore';
+
+export function NoiseMeterPanel() {
+  const { currentLevel, setCurrentLevel, thresholds } = useNoiseStore();
+  // UI is built immediately using functional store
+}
+```
+
+**NO Waiting, NO Refactoring Later**. Build with store from day one of each phase.
 
 ### Testing Strategy per Claude Code
 ```typescript
