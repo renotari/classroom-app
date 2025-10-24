@@ -7,6 +7,12 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { TimerState, TimerConfig } from '../types/timer.types';
 
+// Debug logging (disabile in production)
+const DEBUG_TIMER = import.meta.env.DEV;
+const debugLog = (msg: string) => {
+  if (DEBUG_TIMER) console.log(`[TimerStore] ${msg}`);
+};
+
 interface TimerStore extends TimerState {
   // Configuration (persistente)
   config: TimerConfig;
@@ -46,8 +52,9 @@ export const useTimerStore = create<TimerStore>()(
        */
       setDuration: (seconds: number) => {
         if (seconds <= 0) {
-          console.warn('Timer duration must be > 0');
-          return;
+          const error = new Error('Timer duration must be > 0 seconds');
+          console.error(error);
+          throw error;
         }
 
         const { config } = get();
@@ -73,7 +80,7 @@ export const useTimerStore = create<TimerStore>()(
           },
         });
 
-        console.log(`Timer duration set to ${seconds}s (${Math.floor(seconds / 60)}min)`);
+        debugLog(`Duration set to ${seconds}s (${Math.floor(seconds / 60)}min)`);
       },
 
       /**
@@ -83,17 +90,15 @@ export const useTimerStore = create<TimerStore>()(
         const { status, remainingSeconds } = get();
 
         if (status !== 'idle') {
-          console.warn('Timer can only start from idle state');
-          return;
+          throw new Error('Timer can only start from idle state');
         }
 
         if (remainingSeconds === 0) {
-          console.warn('Cannot start timer with 0 seconds');
-          return;
+          throw new Error('Cannot start timer with 0 seconds remaining');
         }
 
         set({ status: 'running' });
-        console.log('Timer started');
+        debugLog('Started');
       },
 
       /**
@@ -103,12 +108,11 @@ export const useTimerStore = create<TimerStore>()(
         const { status } = get();
 
         if (status !== 'running') {
-          console.warn('Timer can only pause from running state');
-          return;
+          throw new Error('Timer can only pause from running state');
         }
 
         set({ status: 'paused' });
-        console.log('Timer paused');
+        debugLog('Paused');
       },
 
       /**
@@ -118,12 +122,11 @@ export const useTimerStore = create<TimerStore>()(
         const { status } = get();
 
         if (status !== 'paused') {
-          console.warn('Timer can only resume from paused state');
-          return;
+          throw new Error('Timer can only resume from paused state');
         }
 
         set({ status: 'running' });
-        console.log('Timer resumed');
+        debugLog('Resumed');
       },
 
       /**
@@ -138,7 +141,7 @@ export const useTimerStore = create<TimerStore>()(
           warningsTriggered: new Set<number>(),
         });
 
-        console.log('Timer stopped and reset to total duration');
+        debugLog('Stopped, reset to total duration');
       },
 
       /**
@@ -153,7 +156,7 @@ export const useTimerStore = create<TimerStore>()(
           warningsTriggered: new Set<number>(),
         });
 
-        console.log('Timer reset to 0');
+        debugLog('Reset to 0');
       },
 
       /**
@@ -175,7 +178,7 @@ export const useTimerStore = create<TimerStore>()(
             remainingSeconds: 0,
             status: 'completed',
           });
-          console.log('Timer completed!');
+          debugLog('Completed!');
           return;
         }
 
@@ -184,7 +187,7 @@ export const useTimerStore = create<TimerStore>()(
         for (const threshold of warningThresholds) {
           if (newRemaining === threshold && !warningsTriggered.has(threshold)) {
             newWarningsTriggered.add(threshold);
-            console.log(`Warning triggered at ${threshold}s (${Math.floor(threshold / 60)}min)`);
+            debugLog(`Warning at ${threshold}s`);
 
             // Trigger warning callback (sarà gestito da useTimer)
             // Per ora solo log, FASE 4 aggiungerà audio
@@ -205,7 +208,7 @@ export const useTimerStore = create<TimerStore>()(
         const newConfig = { ...config, ...configUpdate };
 
         set({ config: newConfig });
-        console.log('Timer config updated:', newConfig);
+        debugLog('Config updated');
       },
 
       /**

@@ -7,6 +7,12 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { useTimerStore } from '../stores/timerStore';
 
+// Debug logging (disabile in production)
+const DEBUG_TIMER = import.meta.env.DEV;
+const debugLog = (msg: string) => {
+  if (DEBUG_TIMER) console.log(`[Timer] ${msg}`);
+};
+
 /**
  * Callbacks opzionali per eventi timer
  */
@@ -46,11 +52,11 @@ export function useTimer(callbacks?: TimerCallbacks) {
   const callbacksRef = useRef<TimerCallbacks | undefined>(callbacks);
   callbacksRef.current = callbacks;
 
-  // Ref per tracciare warning già emessi (evita duplicati)
-  const lastWarningRef = useRef<number | null>(null);
-
   // Ref per tracciare completion già emesso
   const completionEmittedRef = useRef(false);
+
+  // Ref per tracciare warnings emessi (per evitare duplicati callback)
+  const emittedWarningsRef = useRef<Set<number>>(new Set());
 
   /**
    * Effect per gestire il setInterval quando timer è running
@@ -61,7 +67,7 @@ export function useTimer(callbacks?: TimerCallbacks) {
       return;
     }
 
-    console.log('Timer interval started');
+    debugLog('Timer interval started');
 
     const intervalId = setInterval(() => {
       tick();
@@ -69,34 +75,25 @@ export function useTimer(callbacks?: TimerCallbacks) {
 
     // CLEANUP CRITICO: evita memory leak
     return () => {
-      console.log('Timer interval cleared');
+      debugLog('Timer interval cleared');
       clearInterval(intervalId);
     };
   }, [status, tick]);
 
   /**
    * Effect per gestire callbacks di warning
+   * Monitora warningsTriggered dal store (dove viene aggiornato in tick())
    */
   useEffect(() => {
-    if (status !== 'running') {
-      return;
-    }
-
-    // Check se siamo su una soglia di warning
-    for (const threshold of warningThresholds) {
-      if (
-        remainingSeconds === threshold &&
-        !warningsTriggered.has(threshold) &&
-        lastWarningRef.current !== threshold
-      ) {
-        lastWarningRef.current = threshold;
-        console.log(`⚠️ Warning callback triggered at ${threshold}s`);
-
-        // Trigger callback se presente
+    // Detecta nuovi warning triggerati (elementi in warningsTriggered che non erano emessi prima)
+    for (const threshold of warningsTriggered) {
+      if (!emittedWarningsRef.current.has(threshold)) {
+        emittedWarningsRef.current.add(threshold);
+        debugLog(`⚠️ Warning triggered at ${threshold}s`);
         callbacksRef.current?.onWarning?.(remainingSeconds);
       }
     }
-  }, [remainingSeconds, status, warningThresholds, warningsTriggered]);
+  }, [warningsTriggered, remainingSeconds]);
 
   /**
    * Effect per gestire callback di completion
@@ -104,16 +101,16 @@ export function useTimer(callbacks?: TimerCallbacks) {
   useEffect(() => {
     if (status === 'completed' && !completionEmittedRef.current) {
       completionEmittedRef.current = true;
-      console.log('✅ Timer completion callback triggered');
+      debugLog('✅ Timer completion triggered');
 
       // Trigger callback se presente
       callbacksRef.current?.onComplete?.();
     }
 
-    // Reset flag quando timer torna idle
+    // Reset flags quando timer torna idle
     if (status === 'idle') {
       completionEmittedRef.current = false;
-      lastWarningRef.current = null;
+      emittedWarningsRef.current.clear();
     }
   }, [status]);
 
@@ -128,14 +125,12 @@ export function useTimer(callbacks?: TimerCallbacks) {
 
   /**
    * Helper: Imposta durata e avvia immediatamente
+   * Nota: Zustand è sincrono, quindi setDuration aggiorna immediatamente lo stato
    */
   const setAndStart = useCallback(
     (seconds: number) => {
       setDuration(seconds);
-      // Usa setTimeout per assicurarsi che setDuration sia completato
-      setTimeout(() => {
-        start();
-      }, 0);
+      start();
     },
     [setDuration, start]
   );

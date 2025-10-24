@@ -59,18 +59,14 @@ describe('useTimer', () => {
       expect(result.current.formattedTime).toBe('05:00');
     });
 
-    it('should not accept negative or zero duration', () => {
+    it('should throw error for zero duration', () => {
       const { result } = renderHook(() => useTimer());
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      act(() => {
-        result.current.setDuration(0);
-      });
-
-      expect(result.current.remainingSeconds).toBe(0);
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(() => {
+        act(() => {
+          result.current.setDuration(0);
+        });
+      }).toThrow('Timer duration must be > 0 seconds');
     });
 
     it('should reset status to idle when setting new duration', () => {
@@ -133,18 +129,19 @@ describe('useTimer', () => {
       expect(result.current.remainingSeconds).toBe(300); // Reset a total
     });
 
-    it('should not start from non-idle state', () => {
+    it('should throw error when starting from non-idle state', () => {
       const { result } = renderHook(() => useTimer());
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       act(() => {
         result.current.setDuration(300);
         result.current.start();
-        result.current.start(); // Tentativo di start da running
       });
 
-      expect(consoleSpy).toHaveBeenCalled();
-      consoleSpy.mockRestore();
+      expect(() => {
+        act(() => {
+          result.current.start(); // Tentativo di start da running
+        });
+      }).toThrow('Timer can only start from idle state');
     });
   });
 
@@ -373,11 +370,6 @@ describe('useTimer', () => {
 
       act(() => {
         result.current.setAndStart(300);
-      });
-
-      // Timeout per permettere a setAndStart di completare
-      act(() => {
-        vi.runAllTimers();
       });
 
       expect(result.current.totalSeconds).toBe(300);
