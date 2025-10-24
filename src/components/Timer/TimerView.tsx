@@ -15,7 +15,7 @@ import { TimerPresets } from './TimerPresets';
 export const TimerView: React.FC = () => {
   const [showWarning, setShowWarning] = useState(false);
   const isMountedRef = useRef(true);
-  const warningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const warningTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Inizializza hook con callbacks
   const timer = useTimer({

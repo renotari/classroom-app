@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MainLayout } from '../../src/components/Layout/MainLayout';
 import { ThemeProvider } from '../../src/components/Common/ThemeProvider';
@@ -101,7 +101,7 @@ describe('MainLayout Integration Tests', () => {
 
       const buttons = screen.getAllByRole('button');
       if (buttons.length >= 2) {
-        await user.click(buttons[1]);
+        await user.click(buttons[1] as HTMLElement);
 
         // Re-render to verify state persists
         rerender(
@@ -142,7 +142,7 @@ describe('MainLayout Integration Tests', () => {
 
       const buttons = screen.getAllByRole('button');
       if (buttons.length > 0) {
-        const firstButton = buttons[0];
+        const firstButton = buttons[0] as HTMLElement;
         await user.tab();
 
         // Button should be focusable
@@ -226,8 +226,6 @@ describe('MainLayout Integration Tests', () => {
         </LayoutTestWrapper>
       );
 
-      // Look for timer-related content
-      const timerContent = screen.queryByText(/timer|durata|⏱️/i);
       // May or may not be visible depending on active tab, but shouldn't error
       expect(screen.getByRole('main')).toBeInTheDocument();
     });
@@ -248,7 +246,8 @@ describe('MainLayout Integration Tests', () => {
           el.closest('button')
         );
         if (settingsButton) {
-          await user.click(settingsButton.closest('button')!);
+          const buttonElement = settingsButton.closest('button') as HTMLButtonElement;
+          await user.click(buttonElement);
 
           // Settings content should appear
           await waitFor(() => {
@@ -301,7 +300,7 @@ describe('MainLayout Integration Tests', () => {
       // Try to click each button
       for (let i = 0; i < Math.min(buttons.length, 3); i++) {
         if (buttons[i]) {
-          await user.click(buttons[i]);
+          await user.click(buttons[i] as HTMLElement);
           // After each click, main content should still exist
           expect(screen.getByRole('main')).toBeInTheDocument();
         }
