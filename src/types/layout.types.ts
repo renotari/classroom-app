@@ -3,7 +3,7 @@
  * Definisce i tipi per il sistema di navigation tabs
  */
 
-export type TabId = 'timer' | 'audio' | 'class' | 'tools' | 'settings';
+export type TabId = 'timer' | 'audio' | 'noise' | 'class' | 'tools' | 'settings';
 
 export interface Tab {
   id: TabId;
@@ -14,6 +14,7 @@ export interface Tab {
 export const tabs: Tab[] = [
   { id: 'timer', label: 'Timer', icon: '⏱️' },
   { id: 'audio', label: 'Audio', icon: '🎵' },
+  { id: 'noise', label: 'Noise', icon: '🎤' },
   { id: 'class', label: 'Class', icon: '👥' },
   { id: 'tools', label: 'Tools', icon: '🛠️' },
   { id: 'settings', label: 'Settings', icon: '⚙️' },

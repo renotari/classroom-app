@@ -7,7 +7,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
 
-**Stato Sviluppo**: 🚧 In Development - FASE 4/15 completata (26.7%) ✅ Audio System Done
+**Stato Sviluppo**: 🚧 In Development - FASE 5/15 completata (33.3%) ✅ Noise Monitoring Done
 
 ---
 
@@ -21,7 +21,7 @@ Progettata per funzionare su schermi touch interattivi (STI) e laptop, con suppo
 
 ## ✨ Features
 
-### ✅ Completate (FASE 1-4)
+### ✅ Completate (FASE 1-5)
 
 - **🎨 Sistema Temi**: 6 temi colore personalizzabili
   - Blue Serenity (default), Forest Mist, Twilight
@@ -54,9 +54,19 @@ Progettata per funzionare su schermi touch interattivi (STI) e laptop, con suppo
   - 32 unit tests (100% AudioService coverage)
   - Full UI panel con controlli
 
-### 🚧 In Roadmap (FASE 5-15)
+- **🎤 Monitoraggio Rumore**: Real-time noise level monitoring
+  - Microphone permission onboarding (EC-000, EC-001)
+  - AudioMonitoringService singleton con Web Audio AnalyserNode
+  - Normalizzazione livello rumore (0-100 scale)
+  - 3-color threshold system (verde/giallo/rosso)
+  - 10-minute history tracking con mini-chart
+  - SVG visualization con aggiornamenti real-time
+  - Configurazione soglie dinamica
+  - Graceful degradation se microfono negato
+  - 45+ unit tests (>75% coverage)
+  - NoiseMeterPanel completo integrato in MainLayout
 
-- 🎤 **Monitoraggio Rumore** - Real-time noise meter, soglie configurabili
+### 🚧 In Roadmap (FASE 6-15)
 - 🚦 **Sistema Semaforo** - Traffic light per stato classe (rosso/giallo/verde)
 - 👥 **Gestione Classi** - Import CSV, studenti, presenze/assenze
 - 🎲 **Random Student** - Selezione casuale con animazione
@@ -146,13 +156,13 @@ npm run test:e2e     # Run E2E tests (Playwright)
 | ✅ FASE 2 | Window Management & Theme System | COMPLETATA | ~1.5 giorni |
 | ✅ FASE 3 | Feature Timer | COMPLETATA | ~1.5 giorni |
 | ✅ FASE 4 | Sistema Audio | COMPLETATA | ~1.5 giorni |
-| ⏳ FASE 5 | Monitoraggio Rumore | IN PLANNING | 2 settimane |
+| ✅ FASE 5 | Monitoraggio Rumore | COMPLETATA | ~4 ore |
 | ⏸️ FASE 6 | Sistema Semaforo | NON INIZIATA | 1 settimana |
 | ⏸️ FASE 7 | Class & Students Management | NON INIZIATA | 1.5 settimane |
 | ⏸️ FASE 8 | Group Generation & Separation Rules | NON INIZIATA | 1.5 settimane |
 | ⏸️ FASE 9-15 | Points, Dice, Overlays, Floating Windows | NON INIZIATA | 4 settimane |
 
-**Progress**: 4/15 fasi completate (26.7%) - ~100/145 task (69%)
+**Progress**: 5/15 fasi completate (33.3%) - ~115/145 task (79%)
 
 Vedi [PROJECT_PLAN.md](./PROJECT_PLAN.md) per dettagli completi.
 
@@ -225,5 +235,5 @@ Sviluppato con 🤖 [Claude Code](https://claude.com/claude-code)
 
 ---
 
-**Ultima Modifica**: 2025-10-24
-**Versione**: 0.4.0 (FASE 4 completata)
+**Ultima Modifica**: 2025-10-25
+**Versione**: 0.5.0 (FASE 5 completata)

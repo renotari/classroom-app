@@ -10,6 +10,7 @@ import { TitleBar } from './TitleBar';
 import { SettingsView } from '../Settings/SettingsView';
 import { TimerView } from '../Timer/TimerView';
 import { AudioPanel } from '../Audio/AudioPanel';
+import { NoiseMeterPanel } from '../NoiseMeter/NoiseMeterPanel';
 
 export function MainLayout() {
   const [activeTab, setActiveTab] = useState<TabId>('timer');
@@ -35,10 +36,11 @@ interface TabContentProps {
 }
 
 function TabContent({ activeTab }: TabContentProps) {
-  // Placeholder components - verranno sostituiti nelle fasi successive
+  // Content for each tab - some fully implemented, some placeholders
   const content = {
     timer: <TimerView />,
     audio: <AudioPanel />,
+    noise: <NoiseMeterPanel />,
     class: <ClassPlaceholder />,
     tools: <ToolsPlaceholder />,
     settings: <SettingsPlaceholder />,
