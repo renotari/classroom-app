@@ -216,7 +216,26 @@ Questo è un progetto in sviluppo attivo. Se vuoi contribuire:
 
 ## 📄 License
 
-**TBD** - Da specificare
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+**Why MIT?**
+- Permissive open-source license
+- Simple and widely understood
+- Encourages community contributions
+- Compatible with all dependencies
+
+### Feature Stability Guarantees
+
+| Phase | Status | Guarantee |
+|-------|--------|-----------|
+| **1-5** | ✅ Complete | **Stable**: Production-ready API |
+| **6-14** | 🚧 In Progress | **Unstable**: APIs may change without notice |
+| **15** | 📋 Planned | Release & packaging |
+
+**Before Phase 15 Release**:
+- All APIs finalized and documented
+- Breaking changes frozen
+- Full test coverage verified
 
 ---
 

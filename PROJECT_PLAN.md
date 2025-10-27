@@ -1,10 +1,40 @@
 # Piano di Sviluppo - Teacher Classroom App (Tauri)
 
-**Ultimo Aggiornamento**: 2025-10-19
-**Fase Corrente**: FASE 3 - Feature Timer
+**Ultimo Aggiornamento**: 2025-10-27
+**Fase Corrente**: FASE 5 - Monitoraggio Rumore (COMPLETATA)
+**Prossima Fase**: FASE 6 - Sistema Semaforo (Traffic Light) ⏸️
 **Stack**: Tauri 2.x + React 19.1 + TypeScript 5.8 + Vite 7.1 + Tailwind CSS 4.1 + Zustand 5.0
 **Timeline Totale**: **17 settimane** (14 dev + 3 testing)
 **Basato su Specifiche**: docs/technical-spec.md (revisionato da Opus)
+
+---
+
+## 📊 Stato Globale Progetto
+
+| Fase | Nome | Stato | Data Completamento |
+|------|------|-------|-------------------|
+| 1 | Setup Progetto Tauri | ✅ COMPLETATA | 2025-10-19 |
+| 2 | Window Management & Theme | ✅ COMPLETATA | 2025-10-19 |
+| 3 | Feature Timer | ✅ COMPLETATA | 2025-10-20 |
+| 4 | Sistema Audio | ✅ COMPLETATA | 2025-10-24 |
+| 5 | Monitoraggio Rumore | ✅ COMPLETATA | 2025-10-27 |
+| 6 | Sistema Semaforo | ⏸️ NON INIZIATA | - |
+| 7 | Gestione Classi & Studenti | ⏸️ NON INIZIATA | - |
+| 8 | Random Student Selector | ⏸️ NON INIZIATA | - |
+| 9 | Group Generation | ⏸️ NON INIZIATA | - |
+| 10 | Points System | ⏸️ NON INIZIATA | - |
+| 11 | Dice Roller | ⏸️ NON INIZIATA | - |
+| 12 | Integrazione & Orchestrazione | ⏸️ NON INIZIATA | - |
+| 13 | Overlay & Floating Windows | ⏸️ NON INIZIATA | - |
+| 14 | Performance & Stabilità | ⏸️ NON INIZIATA | - |
+| 15 | Release & Packaging | ⏸️ NON INIZIATA | - |
+
+**Avanzamento Totale**: 5 su 15 fasi completate (33%)
+**Tempo Speso**: ~5 settimane
+**Qualità Raggiunta**:
+- ✅ Unit Test Coverage: 97+ tests, >70% coverage
+- ✅ Performance: <100MB RAM, <5% CPU idle
+- ✅ Edge Cases: 5 CRITICAL gestiti, 4 IMPORTANT gestiti
 
 ---
 
