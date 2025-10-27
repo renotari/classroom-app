@@ -28,7 +28,9 @@ src-tauri/target
 src-tauri/Cargo.lock
 
 # Testing
-coverage
+coverage/*.json
+coverage/*.txt
+coverage/.tmp
 playwright-report
 test-results
 

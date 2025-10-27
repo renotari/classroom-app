@@ -514,8 +514,8 @@ Vedi `docs/edge-cases.md` per dettagli completi
 
 | ID | Descrizione | Impact | Fase | Status | Note |
 |----|-------------|--------|------|--------|------|
-| EC-000 | First-time microphone permission flow | HIGH | 5 | PENDING | Onboarding UX, permission request |
-| EC-001 | Microfono non disponibile/negato | CRITICAL | 5 | PENDING | Fallback UI, graceful degradation |
+| EC-000 | First-time microphone permission flow | HIGH | 5 | ✅ RESOLVED | Implemented in useMicrophonePermission hook + 10 unit tests |
+| EC-001 | Microfono non disponibile/negato | CRITICAL | 5 | ✅ RESOLVED | Handles NotAllowedError, NotFoundError, SecurityError + error messages in Italian |
 | EC-002 | Finestre fuori schermo (multi-monitor) | MEDIUM | 2 | ✅ RESOLVED | Window positioning utility implementata |
 | EC-003 | Multiple istanze app | HIGH | 12 | PENDING | Single-instance check, mutex |
 | EC-004 | Memory leak con app aperta 8+ ore | CRITICAL | 14 | PENDING | Memory profiling, cleanup verification |

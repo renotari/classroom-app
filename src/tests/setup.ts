@@ -19,32 +19,21 @@ afterEach(() => {
   private _state: AudioContextState = 'running';
 
   createGain() {
-    return {
-      gain: { value: 1, setTargetAtTime: () => {} },
-      connect: () => {},
-      disconnect: () => {},
-    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const gain = new (globalThis as any).GainNode();
+    return gain;
   }
 
   createOscillator() {
-    return {
-      frequency: { value: 440 },
-      connect: () => {},
-      start: () => {},
-      stop: () => {},
-      disconnect: () => {},
-    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const osc = new (globalThis as any).OscillatorNode();
+    return osc;
   }
 
   createBufferSource() {
-    return {
-      buffer: null,
-      loop: false,
-      connect: () => {},
-      start: () => {},
-      stop: () => {},
-      disconnect: () => {},
-    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const source = new (globalThis as any).AudioBufferSourceNode();
+    return source;
   }
 
   createBuffer(channels: number, length: number, sampleRate: number) {
@@ -59,22 +48,20 @@ afterEach(() => {
   }
 
   createAnalyser() {
-    return {
-      fftSize: 2048,
-      frequencyBinCount: 1024,
-      getByteTimeDomainData: () => {},
-      getByteFrequencyData: () => {},
-      connect: () => {},
-      disconnect: () => {},
-    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const analyser = new (globalThis as any).AnalyserNode();
+    return analyser;
   }
 
   createMediaStreamSource(stream: MediaStream) {
-    return {
-      mediaStream: stream,
-      connect: () => {},
-      disconnect: () => {},
-    };
+    if (!stream) {
+      throw new Error('MediaStream is required');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const source = new (globalThis as any).MediaStreamAudioSourceNode();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (source as any).mediaStream = stream;
+    return source;
   }
 
   decodeAudioData(_arrayBuffer: ArrayBuffer) {
@@ -136,3 +123,46 @@ Object.defineProperty(navigator, 'mediaDevices', {
     }),
   },
 });
+
+// Mock Web Audio API node types for instanceof checks
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any).AnalyserNode = class AnalyserNode {
+  fftSize = 2048;
+  frequencyBinCount = 1024;
+  getByteTimeDomainData() {}
+  getByteFrequencyData() {}
+  connect() {}
+  disconnect() {}
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any).GainNode = class GainNode {
+  gain = { value: 1, setTargetAtTime: () => {} };
+  connect() {}
+  disconnect() {}
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any).OscillatorNode = class OscillatorNode {
+  frequency = { value: 440 };
+  connect() {}
+  start() {}
+  stop() {}
+  disconnect() {}
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any).AudioBufferSourceNode = class AudioBufferSourceNode {
+  buffer = null;
+  loop = false;
+  connect() {}
+  start() {}
+  stop() {}
+  disconnect() {}
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any).MediaStreamAudioSourceNode = class MediaStreamAudioSourceNode {
+  connect() {}
+  disconnect() {}
+};
