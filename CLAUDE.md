@@ -305,6 +305,8 @@ Quando implementi feature specifiche, referenzia:
 
 **IMPORTANTE**: Stores sono PRE-SCAFFOLDED ma COMPLETAMENTE FUNZIONALI. Non aspettare di implementare il store prima di costruire UI.
 
+**📖 REFERENCE**: Detailed guidelines for when to use local vs. global state are in `docs/state-management-guidelines.md`. Read this first when implementing any new feature!
+
 **Current Status**:
 - ✅ `timerStore.ts` - Fully implemented
 - ✅ `audioStore.ts` - Fully implemented (Phase 4 COMPLETATA)
@@ -497,6 +499,12 @@ describe('Timer Component Integration', () => {
 #### E2E Tests (Playwright)
 
 **Test Location**: `tests/e2e/[feature].spec.ts`
+
+**📖 COMPREHENSIVE GUIDE**: Read `docs/e2e-testing-guide.md` for full patterns, best practices, and helper functions.
+
+**Helpers Available**:
+- **Helper Functions** (`tests/e2e/helpers.ts`): 50+ utility functions (e.g., `setTimerDuration()`, `selectClass()`)
+- **Page Objects** (`tests/e2e/pages.ts`): 8+ page classes (e.g., `TimerPage`, `AudioPage`, `SettingsPage`)
 
 **Configuration**: Assumes Tauri dev server running (see Point 7 for fix)
 
