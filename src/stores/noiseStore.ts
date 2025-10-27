@@ -106,18 +106,21 @@ export const useNoiseStore = create<NoiseStoreState>()(
 
         // Ensure: green < yellow < red
         const sorted = [cleanGreen, cleanYellow, cleanRed].sort((a, b) => a - b);
+        const finalGreen = sorted[0] ?? 50;
+        const finalYellow = sorted[1] ?? 70;
+        const finalRed = sorted[2] ?? 100;
 
         const state = get();
         const newNoiseLevel = getNoiseLevelCategory(state.currentLevel, {
-          green: sorted[0],
-          yellow: sorted[1],
-          red: sorted[2],
+          green: finalGreen,
+          yellow: finalYellow,
+          red: finalRed,
         });
 
         set({
-          thresholdGreen: sorted[0],
-          thresholdYellow: sorted[1],
-          thresholdRed: sorted[2],
+          thresholdGreen: finalGreen,
+          thresholdYellow: finalYellow,
+          thresholdRed: finalRed,
           currentNoiseLevel: newNoiseLevel,
         });
       },

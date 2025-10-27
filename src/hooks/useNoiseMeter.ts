@@ -161,14 +161,21 @@ export function useNoiseMeter(): UseNoiseMeterReturn {
     setIsCalibrated(true);
   }, [isMonitoring, setIsCalibrated]);
 
-  // Auto-cleanup on unmount
+  // Auto-cleanup on unmount - always cleanup regardless of state
   useEffect(() => {
     return () => {
-      if (isMonitoring) {
-        stopMonitoring();
+      // Always cleanup on unmount, regardless of monitoring state
+      if (levelUnsubscribeRef.current) {
+        levelUnsubscribeRef.current();
+      }
+      if (historyIntervalRef.current) {
+        clearInterval(historyIntervalRef.current);
+      }
+      if (monitoringService.current?.isMonitoringActive()) {
+        monitoringService.current.stopMonitoring();
       }
     };
-  }, [isMonitoring, stopMonitoring]);
+  }, []); // Empty deps - cleanup only on unmount
 
   return {
     currentLevel,

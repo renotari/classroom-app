@@ -24,11 +24,13 @@ export const NoiseHistory = React.memo(function NoiseHistory({
       return 'M 0,0';
     }
 
-    const points = history.map((point, index) => {
-      const x = (index / Math.max(1, history.length - 1)) * (width - 40); // Leave padding
-      const y = height - (point.level / maxLevel) * (height - 40) - 20; // Bottom padding + top padding
-      return { x: x + 20, y }; // Add left padding
-    });
+    const points = history
+      .filter((point): point is { timestamp: number; level: number } => Boolean(point))
+      .map((point, index) => {
+        const x = (index / Math.max(1, history.length - 1)) * (width - 40); // Leave padding
+        const y = height - (point.level / maxLevel) * (height - 40) - 20; // Bottom padding + top padding
+        return { x: x + 20, y }; // Add left padding
+      });
 
     const pathData = points
       .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
@@ -39,7 +41,8 @@ export const NoiseHistory = React.memo(function NoiseHistory({
 
   const getCurrentLevel = () => {
     if (history.length === 0) return 0;
-    return history[history.length - 1].level;
+    const lastPoint = history[history.length - 1];
+    return lastPoint?.level ?? 0;
   };
 
   const getAverageLevel = () => {

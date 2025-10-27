@@ -189,7 +189,6 @@ describe('AudioMonitoringService', () => {
       const mediaStream = createMockMediaStream();
 
       service.startMonitoring(mediaStream);
-      const levelBefore = service.getBaselineLevel();
 
       service.calibrate();
       const levelAfter = service.getBaselineLevel();

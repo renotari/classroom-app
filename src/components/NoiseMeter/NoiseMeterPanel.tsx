@@ -28,12 +28,19 @@ export function NoiseMeterPanel() {
 
   const [showSettings, setShowSettings] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Auto-start monitoring if permission granted
   useEffect(() => {
     if (microphoneGranted && !isMonitoring && !isStarting) {
       setIsStarting(true);
-      startMonitoring().finally(() => setIsStarting(false));
+      setError(null);
+      startMonitoring()
+        .catch((err) => {
+          const msg = err instanceof Error ? err.message : 'Errore sconosciuto';
+          setError(`Impossibile avviare il monitoraggio: ${msg}`);
+        })
+        .finally(() => setIsStarting(false));
     }
   }, [microphoneGranted, isMonitoring, isStarting, startMonitoring]);
 
@@ -41,12 +48,20 @@ export function NoiseMeterPanel() {
   const handleToggleMonitoring = async () => {
     if (isMonitoring) {
       stopMonitoring();
+      setError(null);
     } else {
       setIsStarting(true);
-      const success = await startMonitoring();
-      setIsStarting(false);
-      if (!success) {
-        console.error('Failed to start monitoring');
+      setError(null);
+      try {
+        const success = await startMonitoring();
+        if (!success) {
+          setError('Impossibile avviare il monitoraggio. Verifica i permessi del microfono.');
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Errore sconosciuto';
+        setError(`Errore: ${msg}`);
+      } finally {
+        setIsStarting(false);
       }
     }
   };
@@ -58,6 +73,20 @@ export function NoiseMeterPanel() {
 
   return (
     <div className="space-y-6 h-full overflow-auto pb-6">
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded flex items-center justify-between gap-3">
+          <span className="text-sm">{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="text-red-700 hover:text-red-900 font-bold"
+            aria-label="Chiudi errore"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

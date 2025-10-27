@@ -26,7 +26,7 @@ function App() {
       {/* Microphone Permission Onboarding Modal */}
       <MicrophonePermissionFlow
         isOpen={showMicrophoneOnboarding}
-        onComplete={(granted) => {
+        onComplete={() => {
           setShowMicrophoneOnboarding(false);
         }}
       />

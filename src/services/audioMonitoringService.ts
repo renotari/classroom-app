@@ -108,6 +108,13 @@ export class AudioMonitoringService {
     }
 
     try {
+      // Resume AudioContext if suspended (required by some browsers)
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume().catch((err) => {
+          console.warn('[AudioMonitoringService] Failed to resume AudioContext:', err);
+        });
+      }
+
       this.mediaStream = mediaStream;
 
       // Create media stream source
@@ -196,20 +203,22 @@ export class AudioMonitoringService {
    * Private method
    */
   private updateLevel(): void {
-    if (!this.isMonitoring || !this.analyser) {
+    if (!this.isMonitoring || !this.analyser || !this.frequencyData) {
       return;
     }
 
     // Get frequency data
-    this.analyser.getByteFrequencyData(this.frequencyData!);
+    this.analyser.getByteFrequencyData(this.frequencyData);
 
     // Calculate RMS (Root Mean Square) level
     let sum = 0;
-    for (let i = 0; i < this.frequencyData!.length; i++) {
-      const value = this.frequencyData![i] / 255.0;
+    const dataLength = this.frequencyData.length;
+    for (let i = 0; i < dataLength; i++) {
+      const byte = this.frequencyData[i] ?? 0;
+      const value = byte / 255.0;
       sum += value * value;
     }
-    const rms = Math.sqrt(sum / this.frequencyData!.length);
+    const rms = Math.sqrt(sum / dataLength);
 
     // Convert RMS to dB (20 * log10(rms))
     const db = rms > 0 ? 20 * Math.log10(rms) : this.config.minDb;

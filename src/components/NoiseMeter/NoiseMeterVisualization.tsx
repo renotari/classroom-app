@@ -53,6 +53,8 @@ export const NoiseMeterVisualization = React.memo(function NoiseMeterVisualizati
         height={svgHeight}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         className="drop-shadow-sm"
+        role="img"
+        aria-label={`Livello rumore: ${Math.round(percentage)} su 100`}
       >
         {/* Background bar outline */}
         <rect
