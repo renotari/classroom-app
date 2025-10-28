@@ -16,8 +16,9 @@ vi.mock('../../../services/audioMonitoringService', () => ({
       stopMonitoring: vi.fn(),
       getCurrentLevel: vi.fn().mockReturnValue(50),
       calibrate: vi.fn(),
-      onLevelChange: vi.fn((cb) => {
-        cb(50);
+      onLevelChange: vi.fn((_cb) => {
+        // Return unsubscribe function - don't call callback during registration
+        // Callback will be tested separately
         return () => {};
       }),
       isMonitoringActive: vi.fn().mockReturnValue(false),
