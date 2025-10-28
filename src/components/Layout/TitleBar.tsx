@@ -3,28 +3,41 @@
  * Custom title bar con drag region e window controls
  */
 
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { useEffect, useRef } from 'react';
+import { getCurrentWindow, Window } from '@tauri-apps/api/window';
 import { useWindowMode } from '../../hooks/useWindowMode';
 
 export function TitleBar() {
   const { mode, toggleMode } = useWindowMode();
-  const window = getCurrentWindow();
+  const windowRef = useRef<Window | null>(null);
+
+  // Initialize Tauri window reference
+  useEffect(() => {
+    try {
+      windowRef.current = getCurrentWindow();
+    } catch (error) {
+      // Silently fail in test environment where Tauri is not available
+      console.debug('[TitleBar] Tauri window not available (expected in tests)');
+    }
+  }, []);
 
   const handleMinimize = async () => {
+    if (!windowRef.current) return;
     try {
-      await window.minimize();
+      await windowRef.current.minimize();
     } catch (error) {
       console.error('Failed to minimize:', error);
     }
   };
 
   const handleMaximize = async () => {
+    if (!windowRef.current) return;
     try {
-      const isMaximized = await window.isMaximized();
+      const isMaximized = await windowRef.current.isMaximized();
       if (isMaximized) {
-        await window.unmaximize();
+        await windowRef.current.unmaximize();
       } else {
-        await window.maximize();
+        await windowRef.current.maximize();
       }
     } catch (error) {
       console.error('Failed to maximize/unmaximize:', error);
@@ -32,8 +45,9 @@ export function TitleBar() {
   };
 
   const handleClose = async () => {
+    if (!windowRef.current) return;
     try {
-      await window.close();
+      await windowRef.current.close();
     } catch (error) {
       console.error('Failed to close:', error);
     }
