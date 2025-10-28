@@ -135,6 +135,17 @@ export class AudioService {
     return this.masterGain;
   }
 
+  /**
+   * Set the master volume level
+   * @param volume - Volume level (0-1)
+   */
+  setMasterVolume(volume: number): void {
+    const clampedVolume = Math.max(0, Math.min(1, volume));
+    this.masterGain.gain.value = clampedVolume;
+    this.config.masterVolume = clampedVolume;
+    if (DEBUG) console.log(`[AudioService] Master volume set to ${clampedVolume}`);
+  }
+
   // ============ Audio File Loading ============
   /**
    * Validate audio file URL for security

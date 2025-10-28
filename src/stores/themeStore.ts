@@ -23,11 +23,24 @@ export const useThemeStore = create<ThemeStore>()(
       setTheme: (themeId: ThemeId) => {
         set({ currentTheme: themeId });
         // Applica immediatamente le CSS variables
-        applyThemeVariables(getTheme(themeId));
+        try {
+          const theme = getTheme(themeId);
+          if (theme && theme.colors) {
+            applyThemeVariables(theme.colors);
+          }
+        } catch (error) {
+          console.error(`Error setting theme ${themeId}:`, error);
+        }
       },
 
       getTheme: () => {
-        return getTheme(get().currentTheme);
+        try {
+          const theme = getTheme(get().currentTheme);
+          return theme || getTheme(defaultTheme);
+        } catch (error) {
+          console.error('Error getting theme:', error);
+          return getTheme(defaultTheme);
+        }
       },
     }),
     {

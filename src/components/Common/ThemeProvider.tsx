@@ -16,8 +16,19 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   // Applica tema all'avvio e quando cambia
   useEffect(() => {
-    const theme = getTheme(currentTheme);
-    applyThemeToDOM(theme.colors);
+    try {
+      const theme = getTheme(currentTheme);
+      if (theme && theme.colors) {
+        applyThemeToDOM(theme.colors);
+      }
+    } catch (error) {
+      console.error('Error applying theme:', error);
+      // Fallback to default theme colors if error occurs
+      const defaultTheme = getTheme('blueSerenity');
+      if (defaultTheme && defaultTheme.colors) {
+        applyThemeToDOM(defaultTheme.colors);
+      }
+    }
   }, [currentTheme]);
 
   return <>{children}</>;

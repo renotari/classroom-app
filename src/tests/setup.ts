@@ -1,12 +1,39 @@
 import '@testing-library/jest-dom';
-import { afterEach } from 'vitest';
+import { afterEach, beforeEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 
 type AudioContextState = 'suspended' | 'running' | 'closed';
 
+// Initialize localStorage mock for Zustand persist middleware
+beforeEach(() => {
+  // Mock localStorage for test environment
+  const localStorageMock = (() => {
+    let store: Record<string, string> = {};
+    return {
+      getItem: (key: string) => store[key] || null,
+      setItem: (key: string, value: string) => {
+        store[key] = value.toString();
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        store = {};
+      },
+    };
+  })();
+
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+    writable: true,
+  });
+});
+
 // Cleanup dopo ogni test
 afterEach(() => {
   cleanup();
+  // Clear localStorage
+  window.localStorage.clear();
   // Clear AudioService singleton for test isolation
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (globalThis as any).AudioService = undefined;
