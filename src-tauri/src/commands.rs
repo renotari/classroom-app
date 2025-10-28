@@ -7,11 +7,10 @@
 //! const result = await invoke('read_csv', { path: '/path/to/file.csv' });
 //! ```
 
-use crate::errors::BackendError;
 use crate::file_ops;
 use crate::window;
 use serde_json::Value;
-use tauri::State;
+use tauri::WebviewWindow;
 
 // ============================================================================
 // File Operations Commands
@@ -23,15 +22,21 @@ use tauri::State;
 /// * `path` - Path to CSV file
 ///
 /// # Returns
-/// JSON with parsed records or error
+/// JSON with parsed records or structured error with typed error code
 ///
 /// # Example
 /// ```javascript
-/// const data = await invoke('read_csv', { path: './students.csv' });
+/// const data = await invoke('read_csv', { path: './students.csv' })
+///   .catch(err => console.error(err.code)); // e.g., "FILE_NOT_FOUND"
 /// ```
 #[tauri::command]
-pub fn read_csv(path: String) -> Result<Value, String> {
-    file_ops::read_csv(&path).map_err(|e| e.to_string())
+pub fn read_csv(path: String) -> Result<Value, serde_json::Value> {
+    file_ops::read_csv(&path).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
+        serde_json::json!({
+            "code": "UNKNOWN_ERROR",
+            "message": "Failed to serialize error"
+        })
+    }))
 }
 
 /// Save configuration value
@@ -40,16 +45,24 @@ pub fn read_csv(path: String) -> Result<Value, String> {
 /// * `key` - Configuration key
 /// * `value` - Configuration value (any JSON-serializable)
 ///
+/// # Returns
+/// Empty result with structured error on failure
+///
 /// # Example
 /// ```javascript
 /// await invoke('save_config', {
 ///   key: 'theme',
 ///   value: 'Energy'
-/// });
+/// }).catch(err => console.error(err.code));
 /// ```
 #[tauri::command]
-pub fn save_config(key: String, value: Value) -> Result<(), String> {
-    file_ops::save_config(&key, value).map_err(|e| e.to_string())
+pub fn save_config(key: String, value: Value) -> Result<(), serde_json::Value> {
+    file_ops::save_config(&key, value).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
+        serde_json::json!({
+            "code": "UNKNOWN_ERROR",
+            "message": "Failed to serialize error"
+        })
+    }))
 }
 
 /// Load configuration value
@@ -58,15 +71,21 @@ pub fn save_config(key: String, value: Value) -> Result<(), String> {
 /// * `key` - Configuration key
 ///
 /// # Returns
-/// Configuration value or null if not found
+/// Configuration value or null if not found, with structured error on failure
 ///
 /// # Example
 /// ```javascript
-/// const theme = await invoke('load_config', { key: 'theme' });
+/// const theme = await invoke('load_config', { key: 'theme' })
+///   .catch(err => console.error(err.code));
 /// ```
 #[tauri::command]
-pub fn load_config(key: String) -> Result<Value, String> {
-    file_ops::load_config(&key).map_err(|e| e.to_string())
+pub fn load_config(key: String) -> Result<Value, serde_json::Value> {
+    file_ops::load_config(&key).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
+        serde_json::json!({
+            "code": "UNKNOWN_ERROR",
+            "message": "Failed to serialize error"
+        })
+    }))
 }
 
 // ============================================================================
@@ -79,16 +98,22 @@ pub fn load_config(key: String) -> Result<Value, String> {
 /// * `window` - Tauri window handle
 ///
 /// # Returns
-/// { x, y, width, height }
+/// { x, y, width, height } or structured error
 ///
 /// # Example
 /// ```javascript
-/// const pos = await invoke('get_window_position');
+/// const pos = await invoke('get_window_position')
+///   .catch(err => console.error(err.code));
 /// console.log(`Window at ${pos.x}, ${pos.y}`);
 /// ```
 #[tauri::command]
-pub fn get_window_position(window: tauri::Window) -> Result<window::WindowPosition, String> {
-    window::get_window_position(&window).map_err(|e| e.to_string())
+pub fn get_window_position(window: WebviewWindow) -> Result<window::WindowPosition, serde_json::Value> {
+    window::get_window_position(&window).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
+        serde_json::json!({
+            "code": "UNKNOWN_ERROR",
+            "message": "Failed to get window position"
+        })
+    }))
 }
 
 /// Set window position and size
@@ -97,19 +122,27 @@ pub fn get_window_position(window: tauri::Window) -> Result<window::WindowPositi
 /// * `position` - { x, y, width, height }
 /// * `window` - Tauri window handle
 ///
+/// # Returns
+/// Empty result with structured error on failure
+///
 /// # Example
 /// ```javascript
 /// await invoke('set_window_position', {
 ///   position: { x: 100, y: 100, width: 800, height: 600 }
-/// });
+/// }).catch(err => console.error(err.code));
 /// ```
 #[tauri::command]
 pub fn set_window_position(
     position: window::WindowPosition,
-    window: tauri::Window,
-) -> Result<(), String> {
+    window: WebviewWindow,
+) -> Result<(), serde_json::Value> {
     let constrained = window::constrain_to_screen(position);
-    window::set_window_position(&window, constrained).map_err(|e| e.to_string())
+    window::set_window_position(&window, constrained).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
+        serde_json::json!({
+            "code": "UNKNOWN_ERROR",
+            "message": "Failed to set window position"
+        })
+    }))
 }
 
 // ============================================================================
@@ -134,17 +167,19 @@ pub fn set_window_position(
 /// }
 /// ```
 #[tauri::command]
-pub fn request_microphone_permission() -> Result<serde_json::json::Value, String> {
-    // TODO: Implement platform-specific microphone permission handling
-    // For now, return success
+pub fn request_microphone_permission() -> Result<serde_json::Value, String> {
+    // TODO: Implement platform-specific microphone permission handling (EC-000)
+    // For now, return success as placeholder
     // This should:
-    // 1. Check if permission already granted
+    // 1. Check if permission already granted via OS APIs
     // 2. If not, request permission via OS dialog
-    // 3. Return permission status
+    // 3. Return permission status and availability
+    // See CLAUDE.md § Edge Cases for EC-000 details
 
     Ok(serde_json::json!({
         "granted": true,
-        "message": "Microphone permission granted"
+        "available": true,
+        "message": "Microphone permission granted (placeholder implementation)"
     }))
 }
 

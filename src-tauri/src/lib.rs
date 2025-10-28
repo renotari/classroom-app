@@ -15,8 +15,6 @@ pub mod errors;
 pub mod file_ops;
 pub mod window;
 
-use tauri::Manager;
-
 /// Initialize and run the Tauri application
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -38,7 +36,7 @@ pub fn run() {
         ])
         // Setup window on startup
         .setup(|app| {
-            window::setup_window(app)?;
+            window::setup_window(app.handle())?;
             Ok(())
         })
         .run(tauri::generate_context!())

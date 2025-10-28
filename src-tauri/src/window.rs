@@ -8,7 +8,7 @@
 
 use crate::errors::{BackendError, self};
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager, Window};
+use tauri::{AppHandle, Manager, WebviewWindow};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WindowPosition {
@@ -33,7 +33,7 @@ pub fn setup_window(app: &AppHandle) -> Result<(), BackendError> {
         .unwrap_or_else(|| "normal".to_string());
 
     // Apply window configuration
-    if let Ok(window) = app.get_webview_window("main") {
+    if let Some(window) = app.get_webview_window("main") {
         match config_str.as_str() {
             "overlay" => setup_overlay_window(&window)?,
             "fullscreen" => setup_fullscreen_window(&window)?,
@@ -45,7 +45,7 @@ pub fn setup_window(app: &AppHandle) -> Result<(), BackendError> {
 }
 
 /// Setup normal window mode
-fn setup_normal_window(window: &Window) -> Result<(), BackendError> {
+fn setup_normal_window(window: &WebviewWindow) -> Result<(), BackendError> {
     window
         .set_size(tauri::LogicalSize::new(1200, 800))
         .map_err(|e| {
@@ -64,7 +64,7 @@ fn setup_normal_window(window: &Window) -> Result<(), BackendError> {
 }
 
 /// Setup overlay window mode (always-on-top, small)
-fn setup_overlay_window(window: &Window) -> Result<(), BackendError> {
+fn setup_overlay_window(window: &WebviewWindow) -> Result<(), BackendError> {
     // Set smaller size
     window
         .set_size(tauri::LogicalSize::new(400, 600))
@@ -93,7 +93,7 @@ fn setup_overlay_window(window: &Window) -> Result<(), BackendError> {
 }
 
 /// Setup fullscreen window mode
-fn setup_fullscreen_window(window: &Window) -> Result<(), BackendError> {
+fn setup_fullscreen_window(window: &WebviewWindow) -> Result<(), BackendError> {
     window
         .set_fullscreen(true)
         .map_err(|e| {
@@ -108,7 +108,7 @@ fn setup_fullscreen_window(window: &Window) -> Result<(), BackendError> {
 }
 
 /// Get window position and size
-pub fn get_window_position(window: &Window) -> Result<WindowPosition, BackendError> {
+pub fn get_window_position(window: &WebviewWindow) -> Result<WindowPosition, BackendError> {
     let pos = window
         .outer_position()
         .map_err(|e| {
@@ -139,7 +139,7 @@ pub fn get_window_position(window: &Window) -> Result<WindowPosition, BackendErr
 
 /// Set window position and size
 pub fn set_window_position(
-    window: &Window,
+    window: &WebviewWindow,
     position: WindowPosition,
 ) -> Result<(), BackendError> {
     window

@@ -89,11 +89,9 @@ impl From<std::io::Error> for BackendError {
     }
 }
 
-impl From<BackendError> for tauri::InvokeError {
-    fn from(err: BackendError) -> Self {
-        tauri::InvokeError::from(err.to_string())
-    }
-}
+// NOTE: BackendError automatically implements From<BackendError> for InvokeError
+// via Tauri's generic impl because BackendError implements Serialize.
+// We don't need an explicit impl.
 
 #[cfg(test)]
 mod tests {

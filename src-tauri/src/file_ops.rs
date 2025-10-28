@@ -9,32 +9,120 @@ use crate::errors::{BackendError, self};
 use serde_json::{json, Value};
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::env;
 
 const CONFIG_DIR: &str = "classroom_config";
 const CONFIG_FILENAME: &str = "app_config.json";
+
+/// Maximum allowed directory depth to prevent excessive path traversal
+const MAX_PATH_DEPTH: usize = 10;
+
+/// Validate CSV file path for security (prevents path traversal attacks)
+///
+/// # Security Checks
+/// - File must be within app data directory
+/// - File must have .csv extension
+/// - Path cannot contain suspicious traversal patterns
+/// - Path depth is limited
+///
+/// # Arguments
+/// * `path` - Path to validate
+/// * `allowed_base` - Base directory path must be within
+///
+/// # Returns
+/// * `Ok(PathBuf)` - Canonical path if valid
+/// * `Err(BackendError)` - If validation fails
+fn validate_csv_path(path: &Path, allowed_base: &Path) -> Result<PathBuf, BackendError> {
+    // Check file extension
+    if path
+        .extension()
+        .and_then(|ext| ext.to_str())
+        .map(|ext| ext.to_lowercase())
+        != Some("csv".to_string())
+    {
+        return Err(BackendError::new(
+            errors::file::INVALID_FORMAT,
+            "File must be a CSV (.csv) file",
+        ));
+    }
+
+    // Canonicalize path to resolve symlinks and relative paths
+    let canonical_path = path.canonicalize().map_err(|e| {
+        BackendError::new(
+            errors::file::PERMISSION_DENIED,
+            "Failed to validate CSV file path",
+        )
+        .with_details(format!("Path canonicalization failed: {}", e))
+    })?;
+
+    // Check path depth to prevent excessive traversal
+    let depth = canonical_path.components().count();
+    if depth > MAX_PATH_DEPTH {
+        return Err(BackendError::new(
+            errors::file::PERMISSION_DENIED,
+            "CSV file path is too deep (possible path traversal attempt)",
+        ));
+    }
+
+    // Canonicalize allowed base directory
+    let canonical_base = allowed_base.canonicalize().map_err(|e| {
+        BackendError::new(
+            errors::system::UNKNOWN_ERROR,
+            "Failed to determine allowed directory",
+        )
+        .with_details(e.to_string())
+    })?;
+
+    // Verify path is within allowed base directory
+    if !canonical_path.starts_with(&canonical_base) {
+        return Err(BackendError::new(
+            errors::file::PERMISSION_DENIED,
+            "CSV file must be within the allowed directory",
+        ));
+    }
+
+    Ok(canonical_path)
+}
 
 /// Read and parse CSV file with encoding detection
 ///
 /// Supports UTF-8, UTF-16, and Windows-1252 encodings
 ///
 /// # Arguments
-/// * `path` - Path to CSV file
+/// * `path` - Path to CSV file (will be validated for security)
 ///
 /// # Returns
 /// * `Value` - Parsed CSV data as JSON
+///
+/// # Security
+/// This function validates the path before reading to prevent path traversal attacks.
 pub fn read_csv(path: &str) -> Result<Value, BackendError> {
     let path = Path::new(path);
 
+    // Get allowed base directory (app data dir)
+    let allowed_base = get_config_path()?
+        .parent()
+        .map(|p| p.to_path_buf())
+        .ok_or_else(|| {
+            BackendError::new(
+                errors::system::UNKNOWN_ERROR,
+                "Failed to determine allowed directory",
+            )
+        })?;
+
+    // Validate path before reading
+    let validated_path = validate_csv_path(path, &allowed_base)?;
+
     // Validate file exists
-    if !path.exists() {
+    if !validated_path.exists() {
         return Err(BackendError::new(
             errors::file::NOT_FOUND,
-            format!("CSV file not found: {}", path.display()),
+            format!("CSV file not found: {}", validated_path.display()),
         ));
     }
 
-    // Read file bytes
-    let bytes = fs::read(path).map_err(|e| {
+    // Read file bytes (use validated path)
+    let bytes = fs::read(&validated_path).map_err(|e| {
         BackendError::new(errors::file::IO_ERROR, "Failed to read CSV file")
             .with_details(e.to_string())
     })?;
@@ -118,14 +206,57 @@ pub fn load_config(key: &str) -> Result<Value, BackendError> {
 }
 
 /// Get the configuration file path
+///
+/// Uses platform-specific app data directories:
+/// - Windows: %APPDATA%/classroom_config/
+/// - macOS: ~/Library/Application Support/classroom_config/
+/// - Linux: ~/.config/classroom_config/ or $XDG_CONFIG_HOME
 fn get_config_path() -> Result<PathBuf, BackendError> {
-    let data_dir = tauri::api::path::app_data_dir(&tauri::Config::default())
+    // Tauri 2.x compatible path resolution
+    // Falls back to standard OS app data directories
+    #[cfg(target_os = "windows")]
+    let data_dir = env::var("APPDATA")
+        .ok()
+        .map(PathBuf::from)
+        .or_else(|| env::var("USERPROFILE").ok().map(|p| {
+            PathBuf::from(p).join("AppData").join("Roaming")
+        }))
         .ok_or_else(|| {
             BackendError::new(
                 errors::system::UNKNOWN_ERROR,
-                "Failed to determine app data directory",
+                "Failed to determine APPDATA directory",
             )
         })?;
+
+    #[cfg(target_os = "macos")]
+    let data_dir = env::var("HOME")
+        .ok()
+        .map(|home| PathBuf::from(home).join("Library").join("Application Support"))
+        .ok_or_else(|| {
+            BackendError::new(
+                errors::system::UNKNOWN_ERROR,
+                "Failed to determine Library directory",
+            )
+        })?;
+
+    #[cfg(target_os = "linux")]
+    let data_dir = env::var("XDG_CONFIG_HOME")
+        .ok()
+        .map(PathBuf::from)
+        .or_else(|| {
+            env::var("HOME").ok().map(|home| {
+                PathBuf::from(home).join(".config")
+            })
+        })
+        .ok_or_else(|| {
+            BackendError::new(
+                errors::system::UNKNOWN_ERROR,
+                "Failed to determine config directory",
+            )
+        })?;
+
+    #[cfg(not(any(target_os = "windows", target_os = "macos", target_os = "linux")))]
+    let data_dir = env::temp_dir();
 
     Ok(data_dir.join(CONFIG_DIR).join(CONFIG_FILENAME))
 }
@@ -228,6 +359,9 @@ impl Utf16Decode for String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+    use std::io::Write;
+    use tempfile::TempDir;
 
     #[test]
     fn test_csv_parse() {
@@ -249,5 +383,92 @@ mod tests {
         let csv = "";
         let result = parse_csv(csv);
         assert!(result.is_err());
+    }
+
+    // ============================================================================
+    // CSV Path Validation Tests (Security)
+    // ============================================================================
+
+    #[test]
+    fn test_validate_csv_path_valid_file() {
+        let temp_dir = TempDir::new().unwrap();
+        let csv_file = temp_dir.path().join("students.csv");
+        let mut file = fs::File::create(&csv_file).unwrap();
+        writeln!(file, "Name,Age").unwrap();
+
+        let result = validate_csv_path(&csv_file, temp_dir.path());
+        assert!(result.is_ok(), "Valid CSV file should pass validation");
+    }
+
+    #[test]
+    fn test_validate_csv_path_invalid_extension() {
+        let temp_dir = TempDir::new().unwrap();
+        let txt_file = temp_dir.path().join("students.txt");
+        let mut file = fs::File::create(&txt_file).unwrap();
+        writeln!(file, "Name,Age").unwrap();
+
+        let result = validate_csv_path(&txt_file, temp_dir.path());
+        assert!(
+            result.is_err(),
+            "Non-CSV file should fail validation"
+        );
+    }
+
+    #[test]
+    fn test_validate_csv_path_outside_allowed_dir() {
+        let temp_dir1 = TempDir::new().unwrap();
+        let temp_dir2 = TempDir::new().unwrap();
+
+        let csv_file = temp_dir2.path().join("students.csv");
+        let mut file = fs::File::create(&csv_file).unwrap();
+        writeln!(file, "Name,Age").unwrap();
+
+        // Try to validate file from temp_dir2 against temp_dir1 as allowed base
+        let result = validate_csv_path(&csv_file, temp_dir1.path());
+        assert!(
+            result.is_err(),
+            "File outside allowed directory should fail"
+        );
+    }
+
+    #[test]
+    fn test_validate_csv_path_nonexistent_file() {
+        let temp_dir = TempDir::new().unwrap();
+        let csv_file = temp_dir.path().join("nonexistent.csv");
+
+        // Canonicalization of nonexistent file should fail
+        let result = validate_csv_path(&csv_file, temp_dir.path());
+        assert!(
+            result.is_err(),
+            "Nonexistent file should fail canonicalization"
+        );
+    }
+
+    #[test]
+    fn test_validate_csv_path_case_insensitive_extension() {
+        let temp_dir = TempDir::new().unwrap();
+        let csv_file = temp_dir.path().join("students.CSV");
+        let mut file = fs::File::create(&csv_file).unwrap();
+        writeln!(file, "Name,Age").unwrap();
+
+        let result = validate_csv_path(&csv_file, temp_dir.path());
+        assert!(
+            result.is_ok(),
+            "CSV extension should be case-insensitive"
+        );
+    }
+
+    #[test]
+    fn test_validate_csv_path_no_extension() {
+        let temp_dir = TempDir::new().unwrap();
+        let file_no_ext = temp_dir.path().join("students");
+        let mut file = fs::File::create(&file_no_ext).unwrap();
+        writeln!(file, "Name,Age").unwrap();
+
+        let result = validate_csv_path(&file_no_ext, temp_dir.path());
+        assert!(
+            result.is_err(),
+            "File without .csv extension should fail"
+        );
     }
 }
