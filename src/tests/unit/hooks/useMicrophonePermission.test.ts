@@ -10,19 +10,14 @@ import { useMicrophonePermission } from '../../../hooks/useMicrophonePermission'
 // Mock navigator.mediaDevices
 const mockGetUserMedia = vi.fn();
 
-Object.defineProperty(globalThis.navigator, 'mediaDevices', {
-  value: {
-    getUserMedia: mockGetUserMedia,
-  },
-  writable: true,
-  configurable: true,
-});
-
 describe('useMicrophonePermission', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
     mockGetUserMedia.mockClear();
+
+    // Mock navigator.mediaDevices.getUserMedia using vi.spyOn
+    vi.spyOn(navigator.mediaDevices, 'getUserMedia').mockImplementation(mockGetUserMedia);
   });
 
   afterEach(() => {
