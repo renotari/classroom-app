@@ -9,6 +9,7 @@
 
 use crate::file_ops;
 use crate::window;
+use crate::permissions;
 use serde_json::Value;
 use tauri::WebviewWindow;
 
@@ -149,38 +150,61 @@ pub fn set_window_position(
 // Permission Commands
 // ============================================================================
 
-/// Request microphone permission (EC-000 handling)
+/// Request microphone permission (EC-000 handling - first-time permission flow)
 ///
-/// Platform-specific implementation:
-/// - Windows: Uses Windows API for permission request
-/// - macOS: Uses AVFoundation
-/// - Linux: Uses PipeWire/PulseAudio APIs
+/// Handles platform-specific microphone permission requests:
+///
+/// **Windows**:
+/// - Enumerates audio input devices via Windows API
+/// - Returns available=true if any device found
+/// - Permission status based on device availability
+///
+/// **macOS**:
+/// - Checks AVFoundation microphone permission status
+/// - May trigger system permission dialog on first request
+/// - Returns exact permission state
+///
+/// **Linux**:
+/// - Checks PipeWire/PulseAudio device availability
+/// - No explicit permission system needed (handled by desktop environment)
+/// - Returns available=true if audio devices found
 ///
 /// # Returns
-/// { granted: bool, message: string }
+/// PermissionStatus with:
+/// - `granted`: true if permission is currently granted
+/// - `available`: true if microphone hardware detected
+/// - `message`: Human-readable status
+/// - `details`: Optional error details
 ///
 /// # Example
 /// ```javascript
-/// const result = await invoke('request_microphone_permission');
-/// if (result.granted) {
-///   // Start microphone
+/// const result = await invoke('request_microphone_permission')
+///   .catch(err => console.error(err.code));
+///
+/// if (result.granted && result.available) {
+///   // Can use microphone for noise monitoring
+///   startAudioCapture();
+/// } else if (!result.available) {
+///   // Show message: no microphone hardware
+///   showWarning("No microphone detected");
+/// } else {
+///   // Show permission request dialog to user
+///   showPermissionPrompt();
 /// }
 /// ```
+///
+/// # See Also
+/// - CLAUDE.md § Edge Cases - EC-000 (First-time microphone permission)
+/// - CLAUDE.md § Edge Cases - EC-001 (Microphone unavailable)
 #[tauri::command]
-pub fn request_microphone_permission() -> Result<serde_json::Value, String> {
-    // TODO: Implement platform-specific microphone permission handling (EC-000)
-    // For now, return success as placeholder
-    // This should:
-    // 1. Check if permission already granted via OS APIs
-    // 2. If not, request permission via OS dialog
-    // 3. Return permission status and availability
-    // See CLAUDE.md § Edge Cases for EC-000 details
-
-    Ok(serde_json::json!({
-        "granted": true,
-        "available": true,
-        "message": "Microphone permission granted (placeholder implementation)"
-    }))
+pub fn request_microphone_permission() -> Result<permissions::PermissionStatus, serde_json::Value> {
+    permissions::request_microphone_permission()
+        .map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
+            serde_json::json!({
+                "code": "PERMISSION_ERROR",
+                "message": "Failed to check microphone permission"
+            })
+        }))
 }
 
 // ============================================================================
