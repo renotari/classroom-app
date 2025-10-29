@@ -54,18 +54,22 @@ describe('useNoiseMeter', () => {
   it('should initialize with default state', () => {
     const { result } = renderHook(() => useNoiseMeter());
 
-    expect(result.current.currentLevel).toBeGreaterThanOrEqual(0);
-    expect(result.current.currentLevel).toBeLessThanOrEqual(100);
-    expect(result.current.isMonitoring).toBeDefined();
-    expect(result.current.isCalibrated).toBeDefined();
+    act(() => {
+      expect(result.current.currentLevel).toBeGreaterThanOrEqual(0);
+      expect(result.current.currentLevel).toBeLessThanOrEqual(100);
+      expect(result.current.isMonitoring).toBeDefined();
+      expect(result.current.isCalibrated).toBeDefined();
+    });
   });
 
   it('should have correct threshold values', () => {
     const { result } = renderHook(() => useNoiseMeter());
 
-    expect(result.current.thresholds.green).toBe(50);
-    expect(result.current.thresholds.yellow).toBe(70);
-    expect(result.current.thresholds.red).toBe(100);
+    act(() => {
+      expect(result.current.thresholds.green).toBe(50);
+      expect(result.current.thresholds.yellow).toBe(70);
+      expect(result.current.thresholds.red).toBe(100);
+    });
   });
 
   it('should start monitoring', async () => {
@@ -99,19 +103,23 @@ describe('useNoiseMeter', () => {
   });
 
   it('should update thresholds', () => {
-    const { result } = renderHook(() => useNoiseMeter());
+    const { result, rerender } = renderHook(() => useNoiseMeter());
 
     act(() => {
       result.current.setThresholds(40, 65, 90);
     });
 
-    expect(result.current.thresholds.green).toBe(40);
-    expect(result.current.thresholds.yellow).toBe(65);
-    expect(result.current.thresholds.red).toBe(90);
+    rerender();
+
+    act(() => {
+      expect(result.current.thresholds.green).toBe(40);
+      expect(result.current.thresholds.yellow).toBe(65);
+      expect(result.current.thresholds.red).toBe(90);
+    });
   });
 
   it('should add history point', () => {
-    const { result } = renderHook(() => useNoiseMeter());
+    const { result, rerender } = renderHook(() => useNoiseMeter());
 
     const initialLength = result.current.history.length;
 
@@ -119,24 +127,33 @@ describe('useNoiseMeter', () => {
       result.current.addHistoryPoint(75);
     });
 
-    expect(result.current.history.length).toBe(initialLength + 1);
+    rerender();
+
+    act(() => {
+      expect(result.current.history.length).toBe(initialLength + 1);
+    });
   });
 
   it('should clear history', () => {
-    const { result } = renderHook(() => useNoiseMeter());
+    const { result, rerender } = renderHook(() => useNoiseMeter());
 
     act(() => {
       result.current.addHistoryPoint(75);
       result.current.addHistoryPoint(80);
     });
 
-    expect(result.current.history.length).toBeGreaterThan(0);
+    rerender();
 
     act(() => {
+      expect(result.current.history.length).toBeGreaterThan(0);
       result.current.clearHistory();
     });
 
-    expect(result.current.history.length).toBe(0);
+    rerender();
+
+    act(() => {
+      expect(result.current.history.length).toBe(0);
+    });
   });
 
   it('should determine noise level color', () => {

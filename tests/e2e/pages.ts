@@ -33,10 +33,11 @@ export class BasePage {
   }
 
   /**
-   * Navigate to tab by aria-label
+   * Navigate to tab by data-testid
    */
   protected async navigateToTab(tabName: string) {
-    const tabSelector = `[aria-label="${tabName}"]`;
+    // Use data-testid for more reliable tab selection
+    const tabSelector = `[data-testid="tab-${tabName.toLowerCase()}"]`;
     await this.page.click(tabSelector);
     await expect(this.page.locator(`text=${tabName}`)).toBeVisible({ timeout: 5000 });
   }

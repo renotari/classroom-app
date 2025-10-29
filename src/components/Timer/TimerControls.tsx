@@ -19,7 +19,7 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
     'w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:disabled:scale-100 hover:scale-110 active:scale-95 shadow-md hover:shadow-lg';
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6" data-testid="timer-controls">
       {/* Primary Control */}
       <div className="flex justify-center gap-4">
         {status === 'idle' && (
@@ -29,6 +29,7 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
             className={`${buttonBaseStyles} bg-green-500 hover:bg-green-600 disabled:bg-green-400`}
             aria-label="Start timer"
             title="Avvia il timer"
+            data-testid="timer-start-btn"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -49,6 +50,7 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
             className={`${buttonBaseStyles} bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-400`}
             aria-label="Pause timer"
             title="Pausa il timer"
+            data-testid="timer-pause-btn"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -69,6 +71,7 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
             className={`${buttonBaseStyles} bg-green-500 hover:bg-green-600 disabled:bg-green-400`}
             aria-label="Resume timer"
             title="Riprendi il timer"
+            data-testid="timer-resume-btn"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -89,6 +92,7 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
             className={`${buttonBaseStyles} bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400`}
             aria-label="Reset timer"
             title="Resetta il timer"
+            data-testid="timer-reset-btn"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -115,6 +119,7 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
             className={`${buttonBaseStyles} bg-red-500 hover:bg-red-600 disabled:bg-red-400 w-14 h-14 md:w-16 md:h-16`}
             aria-label="Stop timer"
             title="Ferma il timer (torna a inizio)"
+            data-testid="timer-stop-btn"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -133,6 +138,7 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
             className={`${buttonBaseStyles} bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 w-14 h-14 md:w-16 md:h-16`}
             aria-label="Reset timer"
             title="Resetta completamente a 00:00"
+            data-testid="timer-reset-secondary-btn"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

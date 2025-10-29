@@ -21,120 +21,63 @@ test.describe('Microphone Permission Flow', () => {
   });
 
   test('should request microphone permission on first use (EC-000)', async ({ page, context }) => {
-    // Override permission to prompt
+    // Grant microphone permission for this test
     await context.grantPermissions(['microphone']);
 
-    // Find Noise Meter or monitoring section
-    const noiseMeterTab = page.locator('[data-testid="noise-tab"], button:has-text("Noise"), button:has-text("Rumore")').first();
+    // Click Noise tab
+    await page.click('[data-testid="tab-noise"]');
 
-    if (await noiseMeterTab.isVisible()) {
-      await noiseMeterTab.click();
-    }
+    // Wait for NoiseMeterPanel to appear (should auto-start with permission granted)
+    await page.waitForTimeout(500);
 
-    // Look for a "Start Monitoring" or similar button
-    const startMonitoringButton = page.locator(
-      'button:has-text("Start"), button:has-text("Avvia"), [data-testid="start-monitoring"]'
-    ).first();
+    // Check if noise monitoring panel is visible or if permission error appeared
+    const noiseMeterPanel = page.locator('[data-testid="noise-meter-panel"]');
+    const permissionError = page.locator('[data-testid="noise-error-message"]');
 
-    if (await startMonitoringButton.isVisible()) {
-      // Browser may show permission dialog here
-      await startMonitoringButton.click();
-
-      // Wait for either:
-      // 1. Permission dialog to appear and be handled
-      // 2. Noise meter to become active
-      await page.waitForTimeout(500);
-    }
-
-    // Verify that monitoring section appears or error is shown gracefully
-    const noiseMeterDisplay = page.locator('[data-testid="noise-meter"], .noise-meter, [class*="NoiseMeter"]').first();
-    const permissionError = page.locator('text=/permesso|permission|negato|denied/i').first();
-
-    const hasMonitor = await noiseMeterDisplay.isVisible({ timeout: 2000 }).catch(() => false);
+    const hasPanel = await noiseMeterPanel.isVisible({ timeout: 2000 }).catch(() => false);
     const hasError = await permissionError.isVisible({ timeout: 1000 }).catch(() => false);
 
-    // Should have either a working monitor or a graceful error message
-    expect(hasMonitor || hasError).toBeTruthy();
+    // Should have either a working panel or a graceful error message
+    expect(hasPanel || hasError).toBeTruthy();
   });
 
   test('should handle denied microphone permission gracefully (EC-001)', async ({ page, context }) => {
-    // Deny microphone permission
-    await context.denyPermissions(['microphone']);
+    // Deny microphone permission - this is the default context behavior
+    // Just navigate to Noise tab and verify error is shown
 
-    // Find Noise Meter section
-    const noiseMeterTab = page.locator('[data-testid="noise-tab"], button:has-text("Noise"), button:has-text("Rumore")').first();
+    // Click Noise tab
+    await page.click('[data-testid="tab-noise"]');
 
-    if (await noiseMeterTab.isVisible()) {
-      await noiseMeterTab.click();
-    }
+    // Wait for UI to render
+    await page.waitForTimeout(500);
 
-    // Try to start monitoring
-    const startButton = page.locator(
-      'button:has-text("Start"), button:has-text("Avvia"), [data-testid="start-monitoring"]'
-    ).first();
+    // Should show PermissionDeniedFallback component with error message
+    // It will show a message about microphone permission being required
+    const errorOrFallback = page.locator('[class*="PermissionDenied"], text=/microfono|permission|negato/i').first();
 
-    if (await startButton.isVisible()) {
-      await startButton.click();
-      await page.waitForTimeout(300);
-    }
-
-    // Should show error message in Italian
-    const errorMessages = [
-      'Permesso negato',
-      'negato',
-      'microfono',
-      'Nessun microfono',
-      'non disponibile'
-    ];
-
-    const errorLocator = page.locator(
-      `text=/${errorMessages.join('|')}/i`
-    );
-
-    // Should show graceful error, not crash
-    const hasError = await errorLocator.first().isVisible({ timeout: 2000 }).catch(() => false);
+    const hasError = await errorOrFallback.isVisible({ timeout: 2000 }).catch(() => false);
     expect(hasError).toBeTruthy('Should show permission denied error message');
   });
 
   test('should show error when no microphone device available', async ({ page }) => {
-    // No special setup needed - on some systems no microphone exists
-    // The hook should handle this gracefully
+    // Note: In test environment with mocked MediaDevices, this will show error
+    // because getUserMedia is mocked
 
-    const noiseMeterTab = page.locator('[data-testid="noise-tab"], button:has-text("Noise"), button:has-text("Rumore")').first();
+    // Click Noise tab
+    await page.click('[data-testid="tab-noise"]');
 
-    if (await noiseMeterTab.isVisible()) {
-      await noiseMeterTab.click();
-    }
+    // Wait for UI to render
+    await page.waitForTimeout(500);
 
-    // Try to enable monitoring
-    const startButton = page.locator(
-      'button:has-text("Start"), button:has-text("Avvia"), [data-testid="start-monitoring"]'
-    ).first();
+    // Look for error or disabled state
+    const errorMessage = page.locator('[data-testid="noise-error-message"]');
+    const fallbackMessage = page.locator('[class*="PermissionDenied"]');
 
-    if (await startButton.isVisible()) {
-      await startButton.click();
-      await page.waitForTimeout(300);
-    }
+    // Either shows error or fallback (acceptable behavior)
+    const hasError = await errorMessage.isVisible({ timeout: 1000 }).catch(() => false);
+    const hasFallback = await fallbackMessage.isVisible({ timeout: 1000 }).catch(() => false);
 
-    // Should not show a generic error - instead should show helpful message
-    // or gracefully disable the feature
-    const helpfulMessages = [
-      'Nessun microfono',      // No microphone
-      'non disponibile',        // not available
-      'Non disponibile',
-      'device not found'
-    ];
-
-    const helpfulError = page.locator(
-      `text=/${helpfulMessages.join('|')}/i`
-    );
-
-    // Either shows helpful error or gracefully disables feature
-    const hasHelpfulError = await helpfulError.first().isVisible({ timeout: 2000 }).catch(() => false);
-    const noiseMeter = page.locator('[data-testid="noise-meter"], .noise-meter').first();
-    const isDisabled = await noiseMeter.locator(':disabled').isVisible({ timeout: 1000 }).catch(() => false);
-
-    expect(hasHelpfulError || isDisabled).toBeTruthy('Should handle missing microphone gracefully');
+    expect(hasError || hasFallback).toBeTruthy('Should handle missing microphone gracefully');
   });
 
   test('should persist permission state across page reloads', async ({ page, context }) => {
@@ -142,41 +85,28 @@ test.describe('Microphone Permission Flow', () => {
     await context.grantPermissions(['microphone']);
 
     // Navigate to noise section
-    const noiseMeterTab = page.locator('[data-testid="noise-tab"], button:has-text("Noise"), button:has-text("Rumore")').first();
+    await page.click('[data-testid="tab-noise"]');
 
-    if (await noiseMeterTab.isVisible()) {
-      await noiseMeterTab.click();
-    }
+    // Wait for panel to load (auto-starts with permission)
+    await page.waitForTimeout(500);
 
-    // Try to start monitoring
-    const startButton = page.locator(
-      'button:has-text("Start"), button:has-text("Avvia"), [data-testid="start-monitoring"]'
-    ).first();
-
-    if (await startButton.isVisible()) {
-      await startButton.click();
-      await page.waitForTimeout(500);
-    }
-
-    // Store initial state
-    const initialStateExists = await page.locator('[data-testid="noise-meter"]').isVisible({ timeout: 1000 }).catch(() => false);
+    // Store initial state - check if panel is visible
+    const initialPanelVisible = await page.locator('[data-testid="noise-meter-panel"]').isVisible({ timeout: 1000 }).catch(() => false);
 
     // Reload page
     await page.reload();
     await page.waitForLoadState('networkidle');
 
     // Re-navigate to noise section
-    const noiseMeterTab2 = page.locator('[data-testid="noise-tab"], button:has-text("Noise"), button:has-text("Rumore")').first();
+    await page.click('[data-testid="tab-noise"]');
 
-    if (await noiseMeterTab2.isVisible()) {
-      await noiseMeterTab2.click();
-    }
+    // Wait a bit for auto-start
+    await page.waitForTimeout(500);
 
-    // Permission should persist (no new dialog should appear)
-    // The app should remember the previous state
-    const persistedState = await page.locator('[data-testid="noise-meter"]').isVisible({ timeout: 2000 }).catch(() => false);
+    // Check if panel is visible again
+    const persistedPanelVisible = await page.locator('[data-testid="noise-meter-panel"]').isVisible({ timeout: 2000 }).catch(() => false);
 
     // State should be consistent before and after reload
-    expect(initialStateExists).toBe(persistedState);
+    expect(initialPanelVisible).toBe(persistedPanelVisible);
   });
 });

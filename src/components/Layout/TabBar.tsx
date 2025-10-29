@@ -47,6 +47,7 @@ function TabButton({ tab, isActive, onClick }: TabButtonProps) {
       `}
       aria-label={`Navigate to ${tab.label}`}
       aria-current={isActive ? 'page' : undefined}
+      data-testid={`tab-${tab.id}`}
     >
       <span className="text-2xl" role="img" aria-label={tab.label}>
         {tab.icon}

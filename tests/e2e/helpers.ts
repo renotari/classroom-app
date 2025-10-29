@@ -25,7 +25,8 @@ import { Page, expect } from '@playwright/test';
  * @param tabName Tab name (e.g., 'Timer', 'Audio', 'Noise', 'Semaphore', 'Classes', 'Settings')
  */
 export async function navigateToTab(page: Page, tabName: string) {
-  const tabSelector = `[aria-label="${tabName}"]`;
+  // Use data-testid for more reliable tab selection
+  const tabSelector = `[data-testid="tab-${tabName.toLowerCase()}"]`;
   await page.click(tabSelector);
   await expect(page.locator(`text=${tabName}`)).toBeVisible({ timeout: 5000 });
 }

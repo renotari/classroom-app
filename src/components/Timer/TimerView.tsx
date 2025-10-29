@@ -74,7 +74,7 @@ export const TimerView: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-col gap-8 p-6 md:p-8 overflow-y-auto">
+    <div className="w-full h-full flex flex-col gap-8 p-6 md:p-8 overflow-y-auto" data-testid="timer-view">
       {/* Header */}
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)]">

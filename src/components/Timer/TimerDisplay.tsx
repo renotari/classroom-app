@@ -50,6 +50,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
         ${status === 'running' ? 'shadow-lg' : 'shadow'}
         p-8 md:p-12
       `}
+      data-testid="timer-display"
     >
       {/* Display principale MM:SS */}
       <div
@@ -59,25 +60,27 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({
           ${getStatusColor()}
           select-none tracking-tighter
         `}
+        data-testid="timer-time-display"
       >
         {formattedTime}
       </div>
 
       {/* Barra di progresso sottile */}
       {totalSeconds > 0 && (
-        <div className="w-full mt-8 h-1 bg-[var(--bg-elevated)] rounded-full overflow-hidden">
+        <div className="w-full mt-8 h-1 bg-[var(--bg-elevated)] rounded-full overflow-hidden" data-testid="timer-progress-bar">
           <div
             className={`
               h-full transition-all duration-300
               ${showWarning ? 'bg-orange-500' : 'bg-[var(--color-primary)]'}
             `}
             style={{ width: `${progressPercent}%` }}
+            data-testid="timer-progress-fill"
           />
         </div>
       )}
 
       {/* Status label */}
-      <div className="mt-6 flex items-center gap-3">
+      <div className="mt-6 flex items-center gap-3" data-testid="timer-status-label">
         {status === 'running' && (
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />

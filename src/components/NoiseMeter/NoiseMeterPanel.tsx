@@ -72,15 +72,16 @@ export function NoiseMeterPanel() {
   }
 
   return (
-    <div className="space-y-6 h-full overflow-auto pb-6">
+    <div className="space-y-6 h-full overflow-auto pb-6" data-testid="noise-meter-panel">
       {/* Error Message */}
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded flex items-center justify-between gap-3">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded flex items-center justify-between gap-3" data-testid="noise-error-message">
           <span className="text-sm">{error}</span>
           <button
             onClick={() => setError(null)}
             className="text-red-700 hover:text-red-900 font-bold"
             aria-label="Chiudi errore"
+            data-testid="noise-error-close"
           >
             ✕
           </button>
@@ -111,6 +112,7 @@ export function NoiseMeterPanel() {
                 ? 'bg-red-500 hover:bg-red-600 text-white'
                 : 'bg-[var(--accent-color)] hover:bg-opacity-80 text-white'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
+            data-testid="noise-toggle-monitoring-btn"
           >
             {isStarting ? 'In corso...' : isMonitoring ? 'Arresta' : 'Avvia'}
           </button>
@@ -121,6 +123,7 @@ export function NoiseMeterPanel() {
             disabled={!isMonitoring}
             className="px-4 py-2 bg-[var(--bg-tertiary)] hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed text-[var(--text-primary)] rounded font-semibold transition-all border border-[var(--border-color)]"
             title="Calibra il livello di silenzio attuale"
+            data-testid="noise-calibrate-btn"
           >
             📏 Calibra
           </button>
@@ -133,6 +136,7 @@ export function NoiseMeterPanel() {
                 ? 'bg-[var(--accent-color)] text-white'
                 : 'bg-[var(--bg-tertiary)] hover:bg-opacity-80 text-[var(--text-primary)]'
             }`}
+            data-testid="noise-settings-toggle"
           >
             ⚙️ Impostazioni
           </button>
@@ -140,15 +144,15 @@ export function NoiseMeterPanel() {
       </div>
 
       {/* Status Bar */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-4 gap-3" data-testid="noise-status-bar">
         {/* Current Level */}
-        <div className="bg-[var(--bg-tertiary)] rounded-lg p-4 border border-[var(--border-color)]">
+        <div className="bg-[var(--bg-tertiary)] rounded-lg p-4 border border-[var(--border-color)]" data-testid="noise-level-display">
           <p className="text-xs text-[var(--text-secondary)] mb-1">Livello Attuale</p>
           <p className="text-3xl font-bold text-[var(--accent-color)]">{Math.round(currentLevel)}</p>
         </div>
 
         {/* Status */}
-        <div className="bg-[var(--bg-tertiary)] rounded-lg p-4 border border-[var(--border-color)]">
+        <div className="bg-[var(--bg-tertiary)] rounded-lg p-4 border border-[var(--border-color)]" data-testid="noise-status-indicator">
           <p className="text-xs text-[var(--text-secondary)] mb-1">Stato</p>
           <div className="flex items-center gap-2">
             <div
@@ -159,6 +163,7 @@ export function NoiseMeterPanel() {
                     ? 'bg-[#f59e0b]'
                     : 'bg-[#ef4444]'
               }`}
+              data-testid={`noise-color-${currentNoiseLevel}`}
             />
             <span className="text-sm font-semibold text-[var(--text-primary)] capitalize">
               {currentNoiseLevel === 'green'
@@ -171,7 +176,7 @@ export function NoiseMeterPanel() {
         </div>
 
         {/* Monitoring Status */}
-        <div className="bg-[var(--bg-tertiary)] rounded-lg p-4 border border-[var(--border-color)]">
+        <div className="bg-[var(--bg-tertiary)] rounded-lg p-4 border border-[var(--border-color)]" data-testid="noise-monitoring-status">
           <p className="text-xs text-[var(--text-secondary)] mb-1">Monitoraggio</p>
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${isMonitoring ? 'bg-[#10b981]' : 'bg-[#6b7280]'}`} />
@@ -182,7 +187,7 @@ export function NoiseMeterPanel() {
         </div>
 
         {/* Calibration Status */}
-        <div className="bg-[var(--bg-tertiary)] rounded-lg p-4 border border-[var(--border-color)]">
+        <div className="bg-[var(--bg-tertiary)] rounded-lg p-4 border border-[var(--border-color)]" data-testid="noise-calibration-status">
           <p className="text-xs text-[var(--text-secondary)] mb-1">Calibrazione</p>
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${isCalibrated ? 'bg-[#10b981]' : 'bg-[#f59e0b]'}`} />
@@ -198,7 +203,7 @@ export function NoiseMeterPanel() {
         {/* Visualization & Settings */}
         <div className="lg:col-span-2 space-y-6">
           {/* Visualization */}
-          <div className="bg-[var(--bg-secondary)] rounded-lg p-6 border border-[var(--border-color)]">
+          <div className="bg-[var(--bg-secondary)] rounded-lg p-6 border border-[var(--border-color)]" data-testid="noise-visualization-container">
             <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Visualizzazione</h2>
             <NoiseMeterVisualization
               level={currentLevel}

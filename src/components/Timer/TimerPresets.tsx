@@ -67,7 +67,7 @@ export const TimerPresets: React.FC<TimerPresetsProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex flex-col gap-6 w-full" data-testid="timer-presets">
       {/* Preset Buttons Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {PRESET_BUTTONS.map((preset) => (
@@ -87,6 +87,7 @@ export const TimerPresets: React.FC<TimerPresetsProps> = ({
             `}
             aria-label={`Set timer to ${preset.label}`}
             title={isRunning ? 'Ferma il timer per cambiare durata' : `Imposta timer a ${preset.label}`}
+            data-testid={`timer-preset-${preset.seconds}`}
           >
             {preset.label}
           </button>
@@ -94,7 +95,7 @@ export const TimerPresets: React.FC<TimerPresetsProps> = ({
       </div>
 
       {/* Custom Duration Input */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3" data-testid="timer-custom-duration">
         {!showCustomInput ? (
           <button
             onClick={() => setShowCustomInput(true)}
@@ -111,11 +112,12 @@ export const TimerPresets: React.FC<TimerPresetsProps> = ({
             `}
             aria-label="Custom duration"
             title={isRunning ? 'Ferma il timer per inserire durata custom' : 'Inserisci una durata personalizzata'}
+            data-testid="timer-custom-toggle"
           >
             ⚙️ Durata Personalizzata
           </button>
         ) : (
-          <div className="flex flex-col gap-3 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--bg-elevated)]">
+          <div className="flex flex-col gap-3 p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--bg-elevated)]" data-testid="timer-custom-input-form">
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label htmlFor="custom-minutes" className="text-xs font-semibold text-[var(--text-secondary)]">
@@ -139,6 +141,7 @@ export const TimerPresets: React.FC<TimerPresetsProps> = ({
                     text-[var(--text-primary)]
                   `}
                   autoFocus
+                  data-testid="timer-custom-minutes-input"
                 />
               </div>
               <div>
@@ -162,6 +165,7 @@ export const TimerPresets: React.FC<TimerPresetsProps> = ({
                     transition-colors outline-none
                     text-[var(--text-primary)]
                   `}
+                  data-testid="timer-custom-seconds-input"
                 />
               </div>
             </div>
@@ -172,6 +176,7 @@ export const TimerPresets: React.FC<TimerPresetsProps> = ({
                 onClick={handleCustomDuration}
                 className="flex-1 px-3 py-2 bg-green-500 text-white rounded font-medium text-sm hover:bg-green-600 active:scale-95 transition-all"
                 aria-label="Apply custom duration"
+                data-testid="timer-custom-apply-btn"
               >
                 ✓ Applica
               </button>
@@ -183,6 +188,7 @@ export const TimerPresets: React.FC<TimerPresetsProps> = ({
                 }}
                 className="flex-1 px-3 py-2 bg-gray-400 text-white rounded font-medium text-sm hover:bg-gray-500 active:scale-95 transition-all"
                 aria-label="Cancel custom duration"
+                data-testid="timer-custom-cancel-btn"
               >
                 ✕ Annulla
               </button>

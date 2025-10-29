@@ -193,3 +193,37 @@ Object.defineProperty(navigator, 'mediaDevices', {
   connect() {}
   disconnect() {}
 };
+
+// Mock Tauri API to prevent "Cannot read properties of undefined" errors
+Object.defineProperty(window, '__TAURI_INTERNALS__', {
+  writable: true,
+  value: {
+    metadata: {
+      currentWindow: 'main',
+    },
+    invoke: () => Promise.resolve(undefined),
+  },
+});
+
+// Mock fetch to intercept audio file requests and prevent actual network calls
+const originalFetch = globalThis.fetch;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any).fetch = async (input: RequestInfo | URL) => {
+  const url = typeof input === 'string' ? input : input.toString();
+
+  // Intercept audio file requests and return a mock audio buffer
+  if (url.includes('/sounds/') || url.endsWith('.wav')) {
+    return new Response(
+      new ArrayBuffer(44), // Minimal WAV header
+      { status: 200, headers: { 'Content-Type': 'audio/wav' } }
+    );
+  }
+
+  // Otherwise, prevent real network calls in tests by rejecting
+  if (url.startsWith('http')) {
+    return Promise.reject(new TypeError('Network request blocked in tests'));
+  }
+
+  // Use original fetch for other cases (shouldn't happen in tests)
+  return originalFetch(input);
+};

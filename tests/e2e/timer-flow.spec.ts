@@ -21,27 +21,21 @@ test.describe('Timer Flow', () => {
   });
 
   test('should set timer from preset and start countdown', async ({ page }) => {
-    // Find Timer tab/section
-    const timerTab = page.locator('[data-testid="timer-tab"], button:has-text("Timer")').first();
-
-    if (await timerTab.isVisible()) {
-      await timerTab.click();
-    }
+    // Click Timer tab
+    await page.click('[data-testid="tab-timer"]');
 
     // Wait for Timer UI to be visible
-    await expect(page.locator('[data-testid="timer-display"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="timer-view"]')).toBeVisible({ timeout: 5000 });
 
-    // Click 5 min preset
-    const fiveMinButton = page.locator('button:has-text("5"), button:has-text("5 min")').first();
-    await fiveMinButton.click();
+    // Click 5 min preset (300 seconds)
+    await page.click('[data-testid="timer-preset-300"]');
 
     // Verify duration is set (5:00)
-    const timerDisplay = page.locator('[data-testid="timer-display"]');
-    await expect(timerDisplay).toContainText(/5:00|300/);
+    const timerDisplay = page.locator('[data-testid="timer-time-display"]');
+    await expect(timerDisplay).toContainText('5:00');
 
     // Click Start button
-    const startButton = page.locator('button:has-text("Start"), [data-testid="timer-start"]').first();
-    await startButton.click();
+    await page.click('[data-testid="timer-start-btn"]');
 
     // Verify timer is running (display should show less than 5:00 after a moment)
     await page.waitForTimeout(1000); // Wait 1 second
@@ -53,32 +47,26 @@ test.describe('Timer Flow', () => {
   });
 
   test('should pause and resume timer', async ({ page }) => {
-    // Set up: Create and start a timer
-    const timerTab = page.locator('[data-testid="timer-tab"], button:has-text("Timer")').first();
-    if (await timerTab.isVisible()) {
-      await timerTab.click();
-    }
+    // Click Timer tab
+    await page.click('[data-testid="tab-timer"]');
 
-    await expect(page.locator('[data-testid="timer-display"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="timer-view"]')).toBeVisible({ timeout: 5000 });
 
-    // Set 1 minute (faster for testing)
-    const oneMinButton = page.locator('button:has-text("1")').first();
-    await oneMinButton.click({ force: true });
+    // Set 5 minutes (faster for testing than full duration)
+    await page.click('[data-testid="timer-preset-300"]');
 
-    // Start
-    const startButton = page.locator('button:has-text("Start"), [data-testid="timer-start"]').first();
-    await startButton.click();
+    // Start timer
+    await page.click('[data-testid="timer-start-btn"]');
 
     // Wait for timer to count down
     await page.waitForTimeout(500);
 
     // Get paused time
-    const timerDisplay = page.locator('[data-testid="timer-display"]');
+    const timerDisplay = page.locator('[data-testid="timer-time-display"]');
     const timerBeforePause = await timerDisplay.textContent();
 
     // Click Pause
-    const pauseButton = page.locator('button:has-text("Pause"), [data-testid="timer-pause"]').first();
-    await pauseButton.click();
+    await page.click('[data-testid="timer-pause-btn"]');
 
     // Verify time stops changing
     await page.waitForTimeout(500);
@@ -88,64 +76,54 @@ test.describe('Timer Flow', () => {
     expect(timerBeforePause).toBe(timerAfterPause);
 
     // Resume should exist and be clickable
-    const resumeButton = page.locator('button:has-text("Resume"), [data-testid="timer-resume"]').first();
-    await expect(resumeButton).toBeVisible();
+    await expect(page.locator('[data-testid="timer-resume-btn"]')).toBeVisible();
   });
 
   test('should reset timer', async ({ page }) => {
-    // Set up timer
-    const timerTab = page.locator('[data-testid="timer-tab"], button:has-text("Timer")').first();
-    if (await timerTab.isVisible()) {
-      await timerTab.click();
-    }
+    // Click Timer tab
+    await page.click('[data-testid="tab-timer"]');
 
-    await expect(page.locator('[data-testid="timer-display"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="timer-view"]')).toBeVisible({ timeout: 5000 });
 
     // Set 5 minutes
-    const fiveMinButton = page.locator('button:has-text("5"), button:has-text("5 min")').first();
-    await fiveMinButton.click();
+    await page.click('[data-testid="timer-preset-300"]');
 
     // Start timer
-    const startButton = page.locator('button:has-text("Start"), [data-testid="timer-start"]').first();
-    await startButton.click();
+    await page.click('[data-testid="timer-start-btn"]');
 
     // Wait for countdown
     await page.waitForTimeout(1000);
 
-    // Click Reset
-    const resetButton = page.locator('button:has-text("Reset"), [data-testid="timer-reset"]').first();
-    await resetButton.click();
+    // Click Stop button (secondary control)
+    await page.click('[data-testid="timer-stop-btn"]');
 
-    // Verify timer is back to 5:00 and not running
-    const timerDisplay = page.locator('[data-testid="timer-display"]');
-    await expect(timerDisplay).toContainText(/5:00|300/);
+    // Verify timer is back to 00:00
+    const timerDisplay = page.locator('[data-testid="timer-time-display"]');
+    await expect(timerDisplay).toContainText('00:00');
   });
 
   test('should show custom duration input', async ({ page }) => {
-    // Find Timer section
-    const timerTab = page.locator('[data-testid="timer-tab"], button:has-text("Timer")').first();
-    if (await timerTab.isVisible()) {
-      await timerTab.click();
-    }
+    // Click Timer tab
+    await page.click('[data-testid="tab-timer"]');
 
-    await expect(page.locator('[data-testid="timer-display"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="timer-view"]')).toBeVisible({ timeout: 5000 });
 
-    // Look for custom input (might be labeled "Durata personalizzata" or "Custom")
-    const customInput = page.locator('input[type="number"], input[placeholder*="durata" i], input[placeholder*="custom" i]').first();
+    // Click custom duration toggle to expand form
+    const customToggle = page.locator('[data-testid="timer-custom-toggle"]');
+    await customToggle.click();
 
-    if (await customInput.isVisible()) {
-      // Set custom value
-      await customInput.fill('2');
+    // Wait for form to appear
+    await expect(page.locator('[data-testid="timer-custom-input-form"]')).toBeVisible();
 
-      // Find and click set button
-      const setButton = page.locator('button:has-text("Set"), button:has-text("Imposta")').first();
-      if (await setButton.isVisible()) {
-        await setButton.click();
-      }
+    // Set 2 minutes
+    await page.fill('[data-testid="timer-custom-minutes-input"]', '2');
+    await page.fill('[data-testid="timer-custom-seconds-input"]', '0');
 
-      // Verify timer updated
-      const timerDisplay = page.locator('[data-testid="timer-display"]');
-      await expect(timerDisplay).toContainText(/2:00|120/);
-    }
+    // Click apply button
+    await page.click('[data-testid="timer-custom-apply-btn"]');
+
+    // Verify timer updated
+    const timerDisplay = page.locator('[data-testid="timer-time-display"]');
+    await expect(timerDisplay).toContainText('2:00');
   });
 });

@@ -46,7 +46,7 @@ export const NoiseMeterVisualization = React.memo(function NoiseMeterVisualizati
   const barWidth = (percentage / 100) * 250; // Leave padding
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col items-center gap-3" data-testid="noise-visualization">
       {/* SVG Bar Chart */}
       <svg
         width={svgWidth}
@@ -55,6 +55,7 @@ export const NoiseMeterVisualization = React.memo(function NoiseMeterVisualizati
         className="drop-shadow-sm"
         role="img"
         aria-label={`Livello rumore: ${Math.round(percentage)} su 100`}
+        data-testid="noise-meter-svg"
       >
         {/* Background bar outline */}
         <rect
