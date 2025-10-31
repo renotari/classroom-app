@@ -37,11 +37,11 @@ export function ThresholdSettings({
   };
 
   return (
-    <div className="space-y-6 p-4 bg-[var(--bg-tertiary)] rounded-lg border border-[var(--border-color)]">
+    <div className="space-y-6 p-4 bg-[var(--bg-tertiary)] rounded-lg border border-[var(--border-color)]" data-testid="threshold-settings">
       <h3 className="text-lg font-semibold text-[var(--text-primary)]">Configurazione Soglie</h3>
 
       {/* Green Threshold Slider */}
-      <div className="space-y-2">
+      <div className="space-y-2" data-testid="threshold-green-section">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-[var(--text-primary)] flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#10b981]" />
@@ -56,6 +56,7 @@ export function ThresholdSettings({
           value={greenThreshold}
           onChange={(e) => handleGreenChange(parseInt(e.target.value))}
           className="w-full h-2 bg-[var(--bg-secondary)] rounded-lg appearance-none cursor-pointer accent-[#10b981]"
+          data-testid="threshold-green-slider"
         />
         <p className="text-xs text-[var(--text-secondary)]">
           Livello massimo per indicare silenzio (lavoro silenzioso)
@@ -63,7 +64,7 @@ export function ThresholdSettings({
       </div>
 
       {/* Yellow Threshold Slider */}
-      <div className="space-y-2">
+      <div className="space-y-2" data-testid="threshold-yellow-section">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-[var(--text-primary)] flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#f59e0b]" />
@@ -78,6 +79,7 @@ export function ThresholdSettings({
           value={yellowThreshold}
           onChange={(e) => handleYellowChange(parseInt(e.target.value))}
           className="w-full h-2 bg-[var(--bg-secondary)] rounded-lg appearance-none cursor-pointer accent-[#f59e0b]"
+          data-testid="threshold-yellow-slider"
         />
         <p className="text-xs text-[var(--text-secondary)]">
           Livello massimo per discussione tranquilla
@@ -85,7 +87,7 @@ export function ThresholdSettings({
       </div>
 
       {/* Red Threshold Slider */}
-      <div className="space-y-2">
+      <div className="space-y-2" data-testid="threshold-red-section">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-[var(--text-primary)] flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#ef4444]" />
@@ -100,6 +102,7 @@ export function ThresholdSettings({
           value={redThreshold}
           onChange={(e) => handleRedChange(parseInt(e.target.value))}
           className="w-full h-2 bg-[var(--bg-secondary)] rounded-lg appearance-none cursor-pointer accent-[#ef4444]"
+          data-testid="threshold-red-slider"
         />
         <p className="text-xs text-[var(--text-secondary)]">
           Livello massimo prima di troppo rumore (trigger alert)
@@ -110,7 +113,7 @@ export function ThresholdSettings({
       <div className="border-t border-[var(--border-color)]" />
 
       {/* Alert Settings */}
-      <div className="space-y-4">
+      <div className="space-y-4" data-testid="alert-settings-container">
         {/* Enable Alerts Toggle */}
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-[var(--text-primary)]">
@@ -121,6 +124,7 @@ export function ThresholdSettings({
             className={`relative w-12 h-6 rounded-full transition-colors ${
               enableAlerts ? 'bg-[var(--accent-color)]' : 'bg-[var(--bg-secondary)]'
             }`}
+            data-testid="alert-enable-toggle"
           >
             <div
               className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
@@ -146,6 +150,7 @@ export function ThresholdSettings({
               value={alertVolume}
               onChange={(e) => onAlertVolumeChange(parseInt(e.target.value))}
               className="w-full h-2 bg-[var(--bg-secondary)] rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)]"
+              data-testid="alert-volume-slider"
             />
           </div>
         )}

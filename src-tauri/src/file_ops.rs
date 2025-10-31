@@ -272,7 +272,7 @@ fn detect_and_decode(bytes: &[u8]) -> Result<String, BackendError> {
     if bytes.len() >= 2 {
         if bytes[0] == 0xFF && bytes[1] == 0xFE {
             // UTF-16LE
-            return String::from_utf16le(bytes)
+            return <String as Utf16Decode>::from_utf16le(bytes)
                 .map_err(|_| {
                     BackendError::new(
                         errors::file::ENCODING_ERROR,
@@ -282,7 +282,7 @@ fn detect_and_decode(bytes: &[u8]) -> Result<String, BackendError> {
         }
         if bytes[0] == 0xFE && bytes[1] == 0xFF {
             // UTF-16BE
-            return String::from_utf16be(bytes)
+            return <String as Utf16Decode>::from_utf16be(bytes)
                 .map_err(|_| {
                     BackendError::new(
                         errors::file::ENCODING_ERROR,

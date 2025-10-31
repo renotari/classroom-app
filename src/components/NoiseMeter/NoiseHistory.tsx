@@ -61,7 +61,7 @@ export const NoiseHistory = React.memo(function NoiseHistory({
   const maxHistoryLevel = getMaxLevel();
 
   return (
-    <div className="space-y-3 p-4 bg-[var(--bg-tertiary)] rounded-lg border border-[var(--border-color)]">
+    <div className="space-y-3 p-4 bg-[var(--bg-tertiary)] rounded-lg border border-[var(--border-color)]" data-testid="noise-history">
       {/* Title */}
       <h3 className="text-sm font-semibold text-[var(--text-primary)]">
         Storia Ultimi 10 Minuti
@@ -73,6 +73,7 @@ export const NoiseHistory = React.memo(function NoiseHistory({
         height={height}
         viewBox={`0 0 ${width} ${height}`}
         className="w-full bg-[var(--bg-secondary)] rounded border border-[var(--border-color)]"
+        data-testid="noise-history-chart"
       >
         {/* Grid lines */}
         <line
@@ -168,16 +169,16 @@ export const NoiseHistory = React.memo(function NoiseHistory({
       </svg>
 
       {/* Statistics */}
-      <div className="grid grid-cols-3 gap-3 text-center">
-        <div className="bg-[var(--bg-secondary)] rounded p-2">
+      <div className="grid grid-cols-3 gap-3 text-center" data-testid="noise-history-stats">
+        <div className="bg-[var(--bg-secondary)] rounded p-2" data-testid="noise-history-current">
           <p className="text-xs text-[var(--text-secondary)]">Attuale</p>
           <p className="text-sm font-bold text-[var(--accent-color)]">{Math.round(currentLevel)}</p>
         </div>
-        <div className="bg-[var(--bg-secondary)] rounded p-2">
+        <div className="bg-[var(--bg-secondary)] rounded p-2" data-testid="noise-history-average">
           <p className="text-xs text-[var(--text-secondary)]">Media</p>
           <p className="text-sm font-bold text-[#f59e0b]">{averageLevel}</p>
         </div>
-        <div className="bg-[var(--bg-secondary)] rounded p-2">
+        <div className="bg-[var(--bg-secondary)] rounded p-2" data-testid="noise-history-max">
           <p className="text-xs text-[var(--text-secondary)]">Massimo</p>
           <p className="text-sm font-bold text-[#ef4444]">{Math.round(maxHistoryLevel)}</p>
         </div>
@@ -185,7 +186,7 @@ export const NoiseHistory = React.memo(function NoiseHistory({
 
       {/* Empty state */}
       {history.length === 0 && (
-        <div className="flex items-center justify-center h-20 text-[var(--text-secondary)] text-sm">
+        <div className="flex items-center justify-center h-20 text-[var(--text-secondary)] text-sm" data-testid="noise-history-empty-state">
           Nessun dato disponibile
         </div>
       )}

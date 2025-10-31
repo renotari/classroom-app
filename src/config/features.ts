@@ -38,48 +38,51 @@
  * Edge case resolution tracking per phase
  * Prevents shipping with unresolved critical issues
  */
-export const EDGE_CASE_STATUS = {
+export const EDGE_CASE_STATUS: Record<
+  string,
+  { complete: boolean; resolvedCases: readonly string[] }
+> = {
   // FASE 1
-  'fase-1': {
+  "fase-1": {
     complete: true,
-    resolvedCases: [] as string[], // No critical edge cases for Phase 1
+    resolvedCases: [], // No critical edge cases for Phase 1
   },
 
   // FASE 2
-  'fase-2': {
+  "fase-2": {
     complete: true,
-    resolvedCases: ['EC-002'], // Window positioning utility
+    resolvedCases: ["EC-002"], // Window positioning utility
   },
 
   // FASE 3
-  'fase-3': {
+  "fase-3": {
     complete: true,
-    resolvedCases: ['EC-015'], // Timer state after crash (accepted: reset to 0)
+    resolvedCases: ["EC-015"], // Timer state after crash (accepted: reset to 0)
   },
 
   // FASE 4
-  'fase-4': {
+  "fase-4": {
     complete: true,
-    resolvedCases: ['EC-005', 'EC-008'], // Missing audio files (fallback beep), AudioContext conflicts
+    resolvedCases: ["EC-005", "EC-008"], // Missing audio files (fallback beep), AudioContext conflicts
   },
 
   // FASE 5: CRITICAL - EC-000, EC-001 must be resolved
-  'fase-5': {
+  "fase-5": {
     complete: true,
-    resolvedCases: ['EC-000', 'EC-001'], // Microphone permission, denied/unavailable
+    resolvedCases: ["EC-000", "EC-001"], // Microphone permission, denied/unavailable
     // IMPORTANT: EC-004 (memory leak testing) deferred to Phase 14 - NOT blocking Phase 5
   },
 
   // FUTURE PHASES
-  'fase-6': {
+  "fase-6": {
     complete: false,
-    resolvedCases: [] as string[],
+    resolvedCases: [],
   },
-  'fase-7': {
+  "fase-7": {
     complete: false,
-    resolvedCases: [] as string[],
+    resolvedCases: [],
   },
-} as const;
+};
 
 /**
  * Feature flags for phased development
@@ -163,67 +166,67 @@ export const FEATURE_FLAGS = {
  * Phase information for reference
  */
 export const PHASE_INFO = {
-  '3': {
-    name: 'Timer Feature',
-    status: 'COMPLETATA' as const,
-    startWeek: '3',
-    completedWeek: '4',
+  "3": {
+    name: "Timer Feature",
+    status: "COMPLETATA" as const,
+    startWeek: "3",
+    completedWeek: "4",
   },
-  '4': {
-    name: 'Audio System',
-    status: 'COMPLETATA' as const,
-    startWeek: '4',
-    completedWeek: '4',
+  "4": {
+    name: "Audio System",
+    status: "COMPLETATA" as const,
+    startWeek: "4",
+    completedWeek: "4",
     features: [
-      'Web Audio API singleton',
-      'Alert sounds',
-      'Background music',
-      'Audio controls',
+      "Web Audio API singleton",
+      "Alert sounds",
+      "Background music",
+      "Audio controls",
     ],
   },
-  '5': {
-    name: 'Noise Monitoring',
-    status: 'COMPLETATA' as const,
-    startWeek: '5',
-    completedWeek: '5',
+  "5": {
+    name: "Noise Monitoring",
+    status: "COMPLETATA" as const,
+    startWeek: "5",
+    completedWeek: "5",
     features: [
-      'Microphone input',
-      'Real-time noise meter',
-      'Threshold alerts',
-      'History tracking',
+      "Microphone input",
+      "Real-time noise meter",
+      "Threshold alerts",
+      "History tracking",
     ],
   },
-  '6': {
-    name: 'Traffic Light (Semaphore)',
-    status: 'NON INIZIATA' as const,
-    estimatedWeek: '7',
+  "6": {
+    name: "Traffic Light (Semaphore)",
+    status: "NON INIZIATA" as const,
+    estimatedWeek: "7",
     features: [
-      'Manual state control',
-      'Auto mode based on noise',
-      'Visual indicators',
-      'Keyboard shortcuts',
+      "Manual state control",
+      "Auto mode based on noise",
+      "Visual indicators",
+      "Keyboard shortcuts",
     ],
   },
-  '7': {
-    name: 'Class Management',
-    status: 'NON INIZIATA' as const,
-    estimatedWeek: '8-9',
+  "7": {
+    name: "Class Management",
+    status: "NON INIZIATA" as const,
+    estimatedWeek: "8-9",
     features: [
-      'CSV import with encoding detection',
-      'Student list management',
-      'Random student selection',
-      'Absence tracking',
+      "CSV import with encoding detection",
+      "Student list management",
+      "Random student selection",
+      "Absence tracking",
     ],
   },
-  '8': {
-    name: 'Group Generation',
-    status: 'NON INIZIATA' as const,
-    estimatedWeek: '10-11',
+  "8": {
+    name: "Group Generation",
+    status: "NON INIZIATA" as const,
+    estimatedWeek: "10-11",
     features: [
-      'Automatic group creation',
-      'Separation rules engine',
-      'Best-effort algorithm',
-      'Group visualization',
+      "Automatic group creation",
+      "Separation rules engine",
+      "Best-effort algorithm",
+      "Group visualization",
     ],
   },
 } as const;
@@ -303,13 +306,19 @@ export function getUnresolvedEdgeCases(faseNumber: number): string[] {
     return [];
   }
 
-  // Get all critical/important edge cases from PROJECT_PLAN.md
-  // For now, we track what's explicitly marked as resolved
-  // Unresolved = not in resolvedCases list
-  const allEdgeCases = [
-    'EC-000', 'EC-001', 'EC-002', 'EC-003', 'EC-004',
-    'EC-005', 'EC-006', 'EC-007', 'EC-008',
-  ];
+  // Phase-specific edge cases mapping
+  const phaseEdgeCases: Record<string, string[]> = {
+    "fase-1": [],
+    "fase-2": ["EC-002"],
+    "fase-3": ["EC-015"],
+    "fase-4": ["EC-005", "EC-008"],
+    "fase-5": ["EC-000", "EC-001"],
+    "fase-6": [],
+    "fase-7": [],
+  };
 
-  return allEdgeCases.filter((ec) => !phaseStatus.resolvedCases.includes(ec));
+  const relevantEdgeCases = phaseEdgeCases[faseKey] || [];
+  return relevantEdgeCases.filter(
+    (ec) => !phaseStatus.resolvedCases.includes(ec)
+  );
 }

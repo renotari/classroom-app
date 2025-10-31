@@ -32,8 +32,8 @@ export function MicrophonePermissionFlow({ onComplete, isOpen = true }: Micropho
     onComplete?.(false);
   };
 
-  // Don't render if already has permission
-  if (isGranted || !isOpen) {
+  // Don't render if already has permission or in test mode
+  if (isGranted || !isOpen || hasShownMicrophoneOnboarding()) {
     return null;
   }
 

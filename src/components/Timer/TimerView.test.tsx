@@ -8,46 +8,52 @@
  * - Audio alerts on completion
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { TimerView } from './TimerView';
-import { useTimerStore } from '../../stores/timerStore';
+import { describe, it, expect, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { act } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { TimerView } from "./TimerView";
+import { useTimerStore } from "../../stores/timerStore";
 
-describe('TimerView Component', () => {
+describe("TimerView Component", () => {
   beforeEach(() => {
     // Reset store before each test
     const store = useTimerStore.getState();
     store.reset();
   });
 
-  describe('Rendering', () => {
-    it('should render timer view with header', () => {
+  describe("Rendering", () => {
+    it("should render timer view with header", () => {
       render(<TimerView />);
       // Check for header using role to avoid multiple matches
-      expect(screen.getByRole('heading', { name: /Timer Didattici/i })).toBeInTheDocument();
-      expect(screen.getByText(/Imposta una durata e gestisci il countdown/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: /Timer Didattici/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Imposta una durata e gestisci il countdown/i)
+      ).toBeInTheDocument();
     });
 
-    it('should display initial timer at 00:00', () => {
+    it("should display initial timer at 00:00", () => {
       render(<TimerView />);
-      expect(screen.getByText('00:00')).toBeInTheDocument();
+      expect(screen.getByText("00:00")).toBeInTheDocument();
     });
 
-    it('should render timer controls section', () => {
+    it("should render timer controls section", () => {
       render(<TimerView />);
-      expect(screen.getByRole('button', { name: /start|play/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /start|play/i })
+      ).toBeInTheDocument();
     });
 
-    it('should render preset selection section', () => {
+    it("should render preset selection section", () => {
       render(<TimerView />);
       expect(screen.getByText(/Seleziona Durata/i)).toBeInTheDocument();
     });
   });
 
-  describe('Timer Display', () => {
-    it('should display correct time after setting duration', async () => {
+  describe("Timer Display", () => {
+    it("should display correct time after setting duration", async () => {
       render(<TimerView />);
       const store = useTimerStore.getState();
 
@@ -55,11 +61,11 @@ describe('TimerView Component', () => {
       store.setDuration(300);
 
       await waitFor(() => {
-        expect(screen.getByText('05:00')).toBeInTheDocument();
+        expect(screen.getByText("05:00")).toBeInTheDocument();
       });
     });
 
-    it('should display progress information when timer has duration', async () => {
+    it("should display progress information when timer has duration", async () => {
       render(<TimerView />);
       const store = useTimerStore.getState();
 
@@ -72,35 +78,35 @@ describe('TimerView Component', () => {
       });
     });
 
-    it('should not display progress when timer is at 0', () => {
+    it("should not display progress when timer is at 0", () => {
       render(<TimerView />);
 
       expect(screen.queryByText(/DURATA TOTALE/i)).not.toBeInTheDocument();
     });
   });
 
-  describe('Timer Controls', () => {
-    it('should be disabled when duration is 0', () => {
+  describe("Timer Controls", () => {
+    it("should be disabled when duration is 0", () => {
       render(<TimerView />);
-      const startButton = screen.getByRole('button', { name: /start|play/i });
+      const startButton = screen.getByRole("button", { name: /start|play/i });
 
       // Initially disabled
       expect(startButton).toBeDisabled();
     });
 
-    it('should enable controls after setting duration', async () => {
+    it("should enable controls after setting duration", async () => {
       render(<TimerView />);
       const store = useTimerStore.getState();
 
       store.setDuration(300);
 
       await waitFor(() => {
-        const startButton = screen.getByRole('button', { name: /start|play/i });
+        const startButton = screen.getByRole("button", { name: /start|play/i });
         expect(startButton).not.toBeDisabled();
       });
     });
 
-    it.skip('should start timer when start button clicked', async () => {
+    it.skip("should start timer when start button clicked", async () => {
       const user = userEvent.setup();
       render(<TimerView />);
       const store = useTimerStore.getState();
@@ -109,7 +115,7 @@ describe('TimerView Component', () => {
         store.setDuration(300);
       });
 
-      const startButton = screen.getByRole('button', { name: /start|play/i });
+      const startButton = screen.getByRole("button", { name: /start|play/i });
 
       expect(startButton).not.toBeDisabled();
 
@@ -120,11 +126,11 @@ describe('TimerView Component', () => {
       // The button should now trigger onStart which calls store.start()
       // Wait a bit for React to process the update
       await waitFor(() => {
-        expect(store.status).toBe('running');
+        expect(store.status).toBe("running");
       });
     });
 
-    it('should show pause button when timer is running', async () => {
+    it("should show pause button when timer is running", async () => {
       render(<TimerView />);
       const store = useTimerStore.getState();
 
@@ -134,19 +140,24 @@ describe('TimerView Component', () => {
       });
 
       // Pause button should be visible when timer is running
-      expect(screen.getByRole('button', { name: /pause/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /pause/i })
+      ).toBeInTheDocument();
     });
   });
 
-  describe('Preset Selection', () => {
-    it.skip('should set duration when preset is clicked', async () => {
+  describe("Preset Selection", () => {
+    it.skip("should set duration when preset is clicked", async () => {
       const user = userEvent.setup();
       render(<TimerView />);
       const store = useTimerStore.getState();
 
       // Click a preset button (e.g., "5 min")
-      const presetButtons = screen.getAllByRole('button');
-      const fiveMinButton = presetButtons.find((btn) => btn.textContent?.includes('5') && btn.textContent?.includes('min'));
+      const presetButtons = screen.getAllByRole("button");
+      const fiveMinButton = presetButtons.find(
+        (btn) =>
+          btn.textContent?.includes("5") && btn.textContent?.includes("min")
+      );
 
       if (fiveMinButton) {
         await user.click(fiveMinButton);
@@ -157,14 +168,14 @@ describe('TimerView Component', () => {
           expect(store.totalSeconds).toBeGreaterThan(0);
         });
         await waitFor(() => {
-          expect(store.status).toBe('running');
+          expect(store.status).toBe("running");
         });
       }
     });
   });
 
-  describe('Audio Alerts', () => {
-    it.skip('should trigger audio alert on timer completion', async () => {
+  describe("Audio Alerts", () => {
+    it.skip("should trigger audio alert on timer completion", async () => {
       render(<TimerView />);
       const store = useTimerStore.getState();
 
@@ -175,13 +186,13 @@ describe('TimerView Component', () => {
       // Wait for timer to complete
       await waitFor(
         () => {
-          expect(store.status).toBe('completed');
+          expect(store.status).toBe("completed");
         },
         { timeout: 5000 }
       );
     });
 
-    it.skip('should show warning visual before timer completes', async () => {
+    it.skip("should show warning visual before timer completes", async () => {
       render(<TimerView />);
       const store = useTimerStore.getState();
 
@@ -201,8 +212,8 @@ describe('TimerView Component', () => {
     });
   });
 
-  describe('Edge Cases', () => {
-    it.skip('should handle rapid start/stop cycles', async () => {
+  describe("Edge Cases", () => {
+    it.skip("should handle rapid start/stop cycles", async () => {
       render(<TimerView />);
       const store = useTimerStore.getState();
 
@@ -215,22 +226,22 @@ describe('TimerView Component', () => {
         store.start();
       });
 
-      expect(store.status).toBe('running');
+      expect(store.status).toBe("running");
 
       act(() => {
         store.stop();
       });
 
-      expect(store.status).toBe('idle');
+      expect(store.status).toBe("idle");
 
       act(() => {
         store.start();
       });
 
-      expect(store.status).toBe('running');
+      expect(store.status).toBe("running");
     });
 
-    it('should reset properly', async () => {
+    it("should reset properly", async () => {
       render(<TimerView />);
       const store = useTimerStore.getState();
 
@@ -244,10 +255,10 @@ describe('TimerView Component', () => {
 
       expect(store.remainingSeconds).toBe(0);
       expect(store.totalSeconds).toBe(0);
-      expect(store.status).toBe('idle');
+      expect(store.status).toBe("idle");
     });
 
-    it('should handle component unmount without memory leaks', async () => {
+    it("should handle component unmount without memory leaks", async () => {
       const { unmount } = render(<TimerView />);
       const store = useTimerStore.getState();
 
@@ -265,46 +276,58 @@ describe('TimerView Component', () => {
     });
   });
 
-  describe('Display Updates', () => {
-    it('should display correct MM:SS format', async () => {
+  describe("Display Updates", () => {
+    it("should display correct MM:SS format", async () => {
       const { rerender } = render(<TimerView />);
       const store = useTimerStore.getState();
 
       store.setDuration(125); // 2:05
-      await waitFor(() => {
-        rerender(<TimerView />);
-        expect(screen.getByText('02:05')).toBeInTheDocument();
-      }, { timeout: 2000 });
+      await waitFor(
+        () => {
+          rerender(<TimerView />);
+          expect(screen.getByText("02:05")).toBeInTheDocument();
+        },
+        { timeout: 2000 }
+      );
 
       store.setDuration(45); // 0:45
-      await waitFor(() => {
-        rerender(<TimerView />);
-        expect(screen.getByText('00:45')).toBeInTheDocument();
-      }, { timeout: 2000 });
+      await waitFor(
+        () => {
+          rerender(<TimerView />);
+          expect(screen.getByText("00:45")).toBeInTheDocument();
+        },
+        { timeout: 2000 }
+      );
     });
 
-    it('should update progress percentage correctly', async () => {
+    it("should update progress percentage correctly", async () => {
       const { rerender } = render(<TimerView />);
       const store = useTimerStore.getState();
 
       store.setDuration(100);
 
-      await waitFor(() => {
-        rerender(<TimerView />);
-        // Progress element should exist
-        expect(screen.getByText(/PROGRESSO/i)).toBeInTheDocument();
-      }, { timeout: 2000 });
+      await waitFor(
+        () => {
+          rerender(<TimerView />);
+          // Progress element should exist
+          expect(screen.getByText(/PROGRESSO/i)).toBeInTheDocument();
+        },
+        { timeout: 2000 }
+      );
 
       // Simulate some ticks
       store.tick();
       store.tick();
 
-      await waitFor(() => {
-        rerender(<TimerView />);
-        const progressElement = screen.getByText(/PROGRESSO/i);
-        // Just verify progress element exists - actual percentage calculation is tested elsewhere
-        expect(progressElement).toBeInTheDocument();
-      }, { timeout: 2000 });
+      await waitFor(
+        () => {
+          rerender(<TimerView />);
+          const progressElement = screen.getByText(/PROGRESSO/i);
+          // Just verify progress element exists - actual percentage calculation is tested elsewhere
+          expect(progressElement).toBeInTheDocument();
+        },
+        { timeout: 2000 }
+      );
     });
   });
 });

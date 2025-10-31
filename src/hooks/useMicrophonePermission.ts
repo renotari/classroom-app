@@ -137,6 +137,14 @@ export function resetMicrophoneOnboarding(): void {
 }
 
 /**
+ * Helper function: mark onboarding as shown without granting permission
+ * Used to prevent the modal from blocking app on first load
+ */
+export function markMicrophoneOnboardingComplete(): void {
+  localStorage.setItem(MICROPHONE_ONBOARDED_KEY, 'true');
+}
+
+/**
  * Helper function: get stored permission status
  */
 export function getStoredMicrophonePermission(): PermissionStatus {
