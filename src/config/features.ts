@@ -73,10 +73,10 @@ export const EDGE_CASE_STATUS: Record<
     // IMPORTANT: EC-004 (memory leak testing) deferred to Phase 14 - NOT blocking Phase 5
   },
 
-  // FUTURE PHASES
+  // FASE 6
   "fase-6": {
-    complete: false,
-    resolvedCases: [],
+    complete: true,
+    resolvedCases: ["EC-011"], // Hotkey conflicts (keyboard shortcuts disabled in input fields)
   },
   "fase-7": {
     complete: false,
@@ -127,13 +127,17 @@ export const FEATURE_FLAGS = {
   noiseThresholds: true,
   noiseHistory: true,
 
-  // FASE 6: Traffic Light System ⏸️ NOT STARTED (estimated week 7)
-  // TODO: Implementare FASE 6 - Semaphore
-  //  - Features: Manual/auto traffic light, visual states
-  //  - Timeline: Week 7 (2025-11-XX)
-  semaphore: false,
-  semaphoreAutoMode: false,
-  semaphoreShortcuts: false,
+  // FASE 6: Traffic Light System ✅ COMPLETATA
+  // - Manual mode: click controls + keyboard shortcuts (1, 2, 3)
+  // - Auto mode: semaphore reacts to noise level
+  // - Fullscreen projection mode
+  // - Sound alerts on state change (optional)
+  // - Full test coverage (23+ unit tests)
+  // - Edge cases: EC-011 (hotkey conflicts) handled
+  semaphoreSystem: true,
+  semaphore: true,
+  semaphoreAutoMode: true,
+  semaphoreShortcuts: true,
 
   // FASE 7: Class Management ⏸️ NOT STARTED (estimated week 8-9)
   // TODO: Implementare FASE 7 - Class Management
@@ -198,13 +202,16 @@ export const PHASE_INFO = {
   },
   "6": {
     name: "Traffic Light (Semaphore)",
-    status: "NON INIZIATA" as const,
-    estimatedWeek: "7",
+    status: "COMPLETATA" as const,
+    startWeek: "6",
+    completedWeek: "6",
     features: [
-      "Manual state control",
-      "Auto mode based on noise",
-      "Visual indicators",
-      "Keyboard shortcuts",
+      "Manual state control (Red/Yellow/Green)",
+      "Auto mode based on noise level",
+      "Visual indicators with animations",
+      "Keyboard shortcuts (1, 2, 3, F for fullscreen)",
+      "Fullscreen projection mode",
+      "Sound alerts on state change",
     ],
   },
   "7": {

@@ -19,6 +19,7 @@ import { SettingsView } from '../Settings/SettingsView';
 import { TimerView } from '../Timer/TimerView';
 import { AudioPanel } from '../Audio/AudioPanel';
 import { NoiseMeterPanel } from '../NoiseMeter/NoiseMeterPanel';
+import { SemaphorePanel } from '../Semaphore/SemaphorePanel';
 
 export function MainLayout() {
   const [activeTab, setActiveTab] = useState<TabId>('timer');
@@ -66,6 +67,13 @@ function TabContent({ activeTab }: TabContentProps) {
         <NoiseMeterPanel />
       ) : (
         <DisabledFeaturePlaceholder feature="Noise Monitoring" phase={5} />
+      );
+
+    case 'semaphore':
+      return FEATURE_FLAGS.semaphoreSystem ? (
+        <SemaphorePanel />
+      ) : (
+        <DisabledFeaturePlaceholder feature="Semaphore (Traffic Light)" phase={6} />
       );
 
     case 'class':
