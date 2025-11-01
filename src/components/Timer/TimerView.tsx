@@ -1,3 +1,4 @@
+import { debug } from '../../utils/debug';
 /**
  * TimerView Component
  * Container principale che integra TimerDisplay, Controls, e Presets
@@ -45,7 +46,7 @@ export const TimerView: React.FC = () => {
       try {
         await audioService.playAlert('timerEnd');
       } catch (error) {
-        console.error('[TimerView] Error playing timer alert:', error);
+        debug.error('[TimerView] Error playing timer alert:', error);
       }
     },
   });

@@ -53,7 +53,7 @@ export function MicrophonePermissionFlow({ onComplete, isOpen = true }: Micropho
         {/* Description */}
         <p className="text-[var(--text-secondary)] text-center mb-6">
           Il monitoraggio del rumore della classe aiuta a rilevare il livello di attenzione degli
-          studenti. Per attivare questa funzione, autorizza l'accesso al microfono.
+          studenti. Per attivare questa funzione, autorizza l&apos;accesso al microfono.
         </p>
 
         {/* Error message if denied or error */}
@@ -91,7 +91,7 @@ export function MicrophonePermissionFlow({ onComplete, isOpen = true }: Micropho
 
         {/* Footer note */}
         <p className="text-xs text-[var(--text-secondary)] text-center mt-6">
-          Puoi modificare questa scelta in qualsiasi momento nelle impostazioni dell'app.
+          Puoi modificare questa scelta in qualsiasi momento nelle impostazioni dell&apos;app.
         </p>
       </div>
     </div>

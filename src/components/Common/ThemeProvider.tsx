@@ -1,3 +1,4 @@
+import { debug } from '../../utils/debug';
 /**
  * ThemeProvider Component
  * Wrapper che inizializza il tema all'avvio dell'app
@@ -22,7 +23,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         applyThemeToDOM(theme.colors);
       }
     } catch (error) {
-      console.error('Error applying theme:', error);
+      debug.error('Error applying theme:', error);
       // Fallback to default theme colors if error occurs
       const defaultTheme = getTheme('blueSerenity');
       if (defaultTheme && defaultTheme.colors) {

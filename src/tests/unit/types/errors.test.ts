@@ -105,7 +105,7 @@ describe('Error Handling System', () => {
 
     it('should fallback to original message if code not mapped', () => {
       const error = new AppError(
-        'UNKNOWN_CODE' as any,
+        'UNKNOWN_CODE' as any, // eslint-disable-line @typescript-eslint/no-explicit-any
         'Unknown error message'
       );
 
@@ -235,8 +235,11 @@ describe('Error Handling System', () => {
 
       const logged = ErrorLogger.log(appError);
 
-      expect(logged.originalError.name).toBe('Error');
-      expect(logged.originalError.message).toBe('Original cause');
+      expect(logged.originalError).toBeDefined();
+      if (logged.originalError && typeof logged.originalError === 'object' && 'name' in logged.originalError && 'message' in logged.originalError) {
+        expect(logged.originalError.name).toBe('Error');
+        expect((logged.originalError as { name: string; message: string }).message).toBe('Original cause');
+      }
     });
 
     it('should provide report method (logging only in tests)', async () => {
@@ -296,7 +299,10 @@ describe('Error Handling System', () => {
 
       const logged = ErrorLogger.log(wrapped);
 
-      expect(logged.originalError.message).toBe('DB connection failed');
+      expect(logged.originalError).toBeDefined();
+      if (logged.originalError && typeof logged.originalError === 'object' && 'message' in logged.originalError) {
+        expect((logged.originalError as { message: string }).message).toBe('DB connection failed');
+      }
     });
   });
 });

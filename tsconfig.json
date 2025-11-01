@@ -24,7 +24,7 @@
     "forceConsistentCasingInFileNames": true,
 
     /* Vitest globals */
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "node"]
   },
   "include": ["src", "tests"],
   "references": [{ "path": "./tsconfig.node.json" }]

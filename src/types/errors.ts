@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * Error Type Definitions and Error Codes
  *
@@ -190,8 +191,8 @@ export class ErrorLogger {
     };
 
     // Console in dev
-    if (process.env.NODE_ENV === 'development') {
-      console.error('[ERROR LOG]', logEntry);
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') {
+      debug.error('[ERROR LOG]', logEntry);
     }
 
     // In production, send to error tracking service
@@ -214,6 +215,6 @@ export class ErrorLogger {
     // TODO: Integrate with error tracking service
     // await fetch('/api/errors', { method: 'POST', body: JSON.stringify(report) });
 
-    console.log('[ERROR REPORT]', report);
+    debug.log('[ERROR REPORT]', report);
   }
 }

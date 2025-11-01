@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * Theme Store (Zustand)
  * Gestisce il tema attivo e la persistenza su localStorage
@@ -29,7 +30,7 @@ export const useThemeStore = create<ThemeStore>()(
             applyThemeVariables(theme);
           }
         } catch (error) {
-          console.error(`Error setting theme ${themeId}:`, error);
+          debug.error(`Error setting theme ${themeId}:`, error);
         }
       },
 
@@ -38,7 +39,7 @@ export const useThemeStore = create<ThemeStore>()(
           const theme = getTheme(get().currentTheme);
           return theme || getTheme(defaultTheme);
         } catch (error) {
-          console.error("Error getting theme:", error);
+          debug.error("Error getting theme:", error);
           return getTheme(defaultTheme);
         }
       },

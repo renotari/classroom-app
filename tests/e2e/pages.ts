@@ -45,6 +45,7 @@ export class BasePage {
   /**
    * Get stored value from localStorage
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async getStoredValue(storeName: string, key: string): Promise<any> {
     return await this.page.evaluate(
       ({ store, property }) => {
@@ -340,6 +341,7 @@ export class SettingsPage extends BasePage {
   /**
    * Verify settings persisted (stored in localStorage)
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async verifySettingsPersisted(storeName: string, key: string, expectedValue: any) {
     const stored = await this.getStoredValue(storeName, key);
     expect(stored).toBe(expectedValue);

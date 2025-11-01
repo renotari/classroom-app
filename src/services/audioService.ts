@@ -1,3 +1,4 @@
+import { debug, DEBUG } from '../utils/debug';
 /**
  * AudioService - Singleton pattern
  *
@@ -19,7 +20,6 @@ import {
   AudioCallbacks
 } from '../types/audio.types';
 
-const DEBUG = false; // Set to true for console logs during development
 
 // ============ Configuration Constants ============
 /** Default master volume level (0-1 scale) */
@@ -102,8 +102,8 @@ export class AudioService {
     };
 
     if (DEBUG) {
-      console.log('[AudioService] Singleton instance created');
-      console.log(`[AudioService] AudioContext state: ${this.audioContext.state}`);
+      debug.log('[AudioService] Singleton instance created');
+      debug.log(`[AudioService] AudioContext state: ${this.audioContext.state}`);
     }
   }
 
@@ -143,7 +143,7 @@ export class AudioService {
     const clampedVolume = Math.max(0, Math.min(1, volume));
     this.masterGain.gain.value = clampedVolume;
     this.config.masterVolume = clampedVolume;
-    if (DEBUG) console.log(`[AudioService] Master volume set to ${clampedVolume}`);
+    if (DEBUG) debug.log(`[AudioService] Master volume set to ${clampedVolume}`);
   }
 
   // ============ Audio File Loading ============
@@ -187,7 +187,7 @@ export class AudioService {
 
       // Check cache first
       if (this.audioBufferCache.has(url)) {
-        if (DEBUG) console.log(`[AudioService] Cache hit: ${url}`);
+        if (DEBUG) debug.log(`[AudioService] Cache hit: ${url}`);
         return this.audioBufferCache.get(url)!;
       }
 
@@ -219,11 +219,11 @@ export class AudioService {
         const firstKey = this.audioBufferCache.keys().next().value as string;
         if (firstKey) {
           this.audioBufferCache.delete(firstKey);
-          if (DEBUG) console.log(`[AudioService] Cache full, removed oldest entry`);
+          if (DEBUG) debug.log(`[AudioService] Cache full, removed oldest entry`);
         }
       }
 
-      if (DEBUG) console.log(`[AudioService] Loaded and cached: ${url}`);
+      if (DEBUG) debug.log(`[AudioService] Loaded and cached: ${url}`);
       return audioBuffer;
     } catch (error) {
       const audioError = error instanceof AudioError
@@ -233,7 +233,7 @@ export class AudioService {
           `Failed to load audio file ${url}: ${error instanceof Error ? error.message : String(error)}`
         );
 
-      console.error(`[AudioService] ${audioError.message}`);
+      debug.error(`[AudioService] ${audioError.message}`);
 
       // Fallback: Generate beep tone
       return this.generateBeepTone(440, 0.5);
@@ -265,7 +265,7 @@ export class AudioService {
       channelData[i] = Math.sin(2 * Math.PI * frequency * t) * BEEP_TONE_AMPLITUDE;
     }
 
-    if (DEBUG) console.log(`[AudioService] Generated beep tone: ${frequency}Hz, ${duration}s`);
+    if (DEBUG) debug.log(`[AudioService] Generated beep tone: ${frequency}Hz, ${duration}s`);
     return buffer;
   }
 
@@ -281,7 +281,7 @@ export class AudioService {
    */
   async playAlert(url: string, callbacks?: AudioCallbacks): Promise<void> {
     try {
-      if (DEBUG) console.log(`[AudioService] Playing alert: ${url}`);
+      if (DEBUG) debug.log(`[AudioService] Playing alert: ${url}`);
 
       // Stop any currently playing alert
       this.stopAlert();
@@ -339,7 +339,7 @@ export class AudioService {
         `Error playing alert: ${error instanceof Error ? error.message : String(error)}`
       );
 
-      console.error(`[AudioService] ${audioError.message}`);
+      debug.error(`[AudioService] ${audioError.message}`);
       callbacks?.onError?.(audioError);
     }
   }
@@ -364,7 +364,7 @@ export class AudioService {
       this.currentAlertGain = null;
     }
 
-    if (DEBUG) console.log(`[AudioService] Alert stopped`);
+    if (DEBUG) debug.log(`[AudioService] Alert stopped`);
   }
 
   // ============ Background Music (LOW Priority) ============
@@ -377,7 +377,7 @@ export class AudioService {
    */
   async playBackgroundMusic(url: string, volume: number = this.config.backgroundMusicVolume): Promise<void> {
     try {
-      if (DEBUG) console.log(`[AudioService] Playing background music: ${url}`);
+      if (DEBUG) debug.log(`[AudioService] Playing background music: ${url}`);
 
       // Stop existing background music
       this.stopBackgroundMusic();
@@ -413,14 +413,14 @@ export class AudioService {
       // Start playback
       source.start(0);
 
-      if (DEBUG) console.log(`[AudioService] Background music started`);
+      if (DEBUG) debug.log(`[AudioService] Background music started`);
     } catch (error) {
       const audioError = error instanceof AudioError ? error : new AudioError(
         'CONTEXT_ERROR',
         `Error playing background music: ${error instanceof Error ? error.message : String(error)}`
       );
 
-      console.error(`[AudioService] ${audioError.message}`);
+      debug.error(`[AudioService] ${audioError.message}`);
     }
   }
 
@@ -446,7 +446,7 @@ export class AudioService {
     this.backgroundMusicState.source = null;
     this.backgroundMusicState.gain = null;
 
-    if (DEBUG) console.log(`[AudioService] Background music stopped`);
+    if (DEBUG) debug.log(`[AudioService] Background music stopped`);
   }
 
   /**
@@ -461,9 +461,9 @@ export class AudioService {
       this.backgroundMusicState.source.stop();
       this.backgroundMusicState.pausedAt = this.audioContext.currentTime;
       this.backgroundMusicState.isPlaying = false;
-      if (DEBUG) console.log(`[AudioService] Background music paused`);
+      if (DEBUG) debug.log(`[AudioService] Background music paused`);
     } catch (e) {
-      console.error('[AudioService] Error pausing background music:', e);
+      debug.error('[AudioService] Error pausing background music:', e);
     }
   }
 
@@ -476,7 +476,7 @@ export class AudioService {
         this.backgroundMusicState.url,
         this.backgroundMusicState.volume
       );
-      if (DEBUG) console.log(`[AudioService] Background music resumed`);
+      if (DEBUG) debug.log(`[AudioService] Background music resumed`);
     }
   }
 
@@ -496,7 +496,7 @@ export class AudioService {
         VOLUME_TRANSITION_TIME_CONSTANT
       );
 
-      if (DEBUG) console.log(`[AudioService] Background music ducked: ${(duckedVolume * 100).toFixed(0)}%`);
+      if (DEBUG) debug.log(`[AudioService] Background music ducked: ${(duckedVolume * 100).toFixed(0)}%`);
     }
   }
 
@@ -512,7 +512,7 @@ export class AudioService {
         VOLUME_TRANSITION_TIME_CONSTANT
       );
 
-      if (DEBUG) console.log(`[AudioService] Background music restored`);
+      if (DEBUG) debug.log(`[AudioService] Background music restored`);
     }
   }
 
@@ -524,7 +524,7 @@ export class AudioService {
     this.config = { ...this.config, ...partial };
     this.masterGain.gain.value = this.config.masterVolume;
     this.backgroundMusicState.volume = this.config.backgroundMusicVolume;
-    if (DEBUG) console.log(`[AudioService] Configuration updated`);
+    if (DEBUG) debug.log(`[AudioService] Configuration updated`);
   }
 
   /**
@@ -555,7 +555,7 @@ export class AudioService {
    */
   clearCache(): void {
     this.audioBufferCache.clear();
-    if (DEBUG) console.log(`[AudioService] Audio buffer cache cleared`);
+    if (DEBUG) debug.log(`[AudioService] Audio buffer cache cleared`);
   }
 
   /**

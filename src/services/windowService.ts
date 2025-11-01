@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * Window Service
  *
@@ -75,7 +76,7 @@ export async function getWindowDimensions(): Promise<WindowDimensions> {
  */
 export async function setWindowDimensions(dims: WindowDimensions): Promise<void> {
   // Stub implementation - actual Tauri integration needed
-  console.log('[WindowService] Setting dimensions (stub):', dims);
+  debug.log('[WindowService] Setting dimensions (stub):', dims);
 }
 
 /**
@@ -85,7 +86,7 @@ export async function setWindowDimensions(dims: WindowDimensions): Promise<void>
  * await maximizeWindow()
  */
 export async function maximizeWindow(): Promise<void> {
-  console.log('[WindowService] Maximizing window (stub)');
+  debug.log('[WindowService] Maximizing window (stub)');
 }
 
 /**
@@ -95,7 +96,7 @@ export async function maximizeWindow(): Promise<void> {
  * await minimizeWindow()
  */
 export async function minimizeWindow(): Promise<void> {
-  console.log('[WindowService] Minimizing window (stub)');
+  debug.log('[WindowService] Minimizing window (stub)');
 }
 
 /**
@@ -105,7 +106,7 @@ export async function minimizeWindow(): Promise<void> {
  * await unmaximizeWindow()
  */
 export async function unmaximizeWindow(): Promise<void> {
-  console.log('[WindowService] Unmaximizing window (stub)');
+  debug.log('[WindowService] Unmaximizing window (stub)');
 }
 
 /**
@@ -117,7 +118,7 @@ export async function unmaximizeWindow(): Promise<void> {
  * await setFullscreen(true)
  */
 export async function setFullscreen(fullscreen: boolean): Promise<void> {
-  console.log('[WindowService] Setting fullscreen:', fullscreen, '(stub)');
+  debug.log('[WindowService] Setting fullscreen:', fullscreen, '(stub)');
 }
 
 /**
@@ -153,7 +154,7 @@ export async function isFullscreen(): Promise<boolean> {
  * await setAlwaysOnTop(true)
  */
 export async function setAlwaysOnTop(alwaysOnTop: boolean): Promise<void> {
-  console.log('[WindowService] Setting always on top:', alwaysOnTop, '(stub)');
+  debug.log('[WindowService] Setting always on top:', alwaysOnTop, '(stub)');
 }
 
 /**
@@ -165,7 +166,7 @@ export async function setAlwaysOnTop(alwaysOnTop: boolean): Promise<void> {
  * await switchToMode('overlay')
  */
 export async function switchToMode(mode: WindowMode): Promise<void> {
-  console.log('[WindowService] Switching to mode:', mode, '(stub)');
+  debug.log('[WindowService] Switching to mode:', mode, '(stub)');
   // Stub: would call setWindowDimensions, setFullscreen, setAlwaysOnTop
 }
 
@@ -176,7 +177,7 @@ export async function switchToMode(mode: WindowMode): Promise<void> {
  * await centerWindow()
  */
 export async function centerWindow(): Promise<void> {
-  console.log('[WindowService] Centering window (stub)');
+  debug.log('[WindowService] Centering window (stub)');
 }
 
 /**
@@ -188,7 +189,7 @@ export async function centerWindow(): Promise<void> {
  * await clampWindowToScreen()
  */
 export async function clampWindowToScreen(): Promise<void> {
-  console.log('[WindowService] Clamping window to screen (stub)');
+  debug.log('[WindowService] Clamping window to screen (stub)');
 }
 
 /**
@@ -198,7 +199,7 @@ export async function clampWindowToScreen(): Promise<void> {
  * await showWindow()
  */
 export async function showWindow(): Promise<void> {
-  console.log('[WindowService] Showing window (stub)');
+  debug.log('[WindowService] Showing window (stub)');
 }
 
 /**
@@ -208,7 +209,7 @@ export async function showWindow(): Promise<void> {
  * await hideWindow()
  */
 export async function hideWindow(): Promise<void> {
-  console.log('[WindowService] Hiding window (stub)');
+  debug.log('[WindowService] Hiding window (stub)');
 }
 
 /**
@@ -218,7 +219,7 @@ export async function hideWindow(): Promise<void> {
  * await closeWindow()
  */
 export async function closeWindow(): Promise<void> {
-  console.log('[WindowService] Closing window (stub)');
+  debug.log('[WindowService] Closing window (stub)');
 }
 
 /**

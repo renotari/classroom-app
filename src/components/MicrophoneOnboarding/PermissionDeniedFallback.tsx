@@ -25,7 +25,7 @@ export function PermissionDeniedFallback({
 
       {/* Description */}
       <p className="text-[var(--text-secondary)] text-center max-w-md">
-        L'accesso al microfono è stato negato. Per utilizzare questa funzione, devi autorizzare il
+        L&apos;accesso al microfono è stato negato. Per utilizzare questa funzione, devi autorizzare il
         microfono.
       </p>
 
@@ -37,15 +37,15 @@ export function PermissionDeniedFallback({
         <ol className="text-sm text-[var(--text-secondary)] space-y-2">
           <li className="flex gap-2">
             <span className="font-semibold">1.</span>
-            <span>Clicca l'icona lucchetto nella barra degli indirizzi</span>
+            <span>Clicca l&apos;icona lucchetto nella barra degli indirizzi</span>
           </li>
           <li className="flex gap-2">
             <span className="font-semibold">2.</span>
-            <span>Trova "Microfono" e seleziona "Consenti"</span>
+            <span>Trova &quot;Microfono&quot; e seleziona &quot;Consenti&quot;</span>
           </li>
           <li className="flex gap-2">
             <span className="font-semibold">3.</span>
-            <span>Ricarica l'applicazione</span>
+            <span>Ricarica l&apos;applicazione</span>
           </li>
         </ol>
       </div>

@@ -7,6 +7,7 @@
 //! const result = await invoke('read_csv', { path: '/path/to/file.csv' });
 //! ```
 
+use crate::errors::BackendError;
 use crate::file_ops;
 use crate::window;
 use crate::permissions;
@@ -23,7 +24,7 @@ use tauri::WebviewWindow;
 /// * `path` - Path to CSV file
 ///
 /// # Returns
-/// JSON with parsed records or structured error with typed error code
+/// JSON with parsed records or structured BackendError with typed error code
 ///
 /// # Example
 /// ```javascript
@@ -31,13 +32,8 @@ use tauri::WebviewWindow;
 ///   .catch(err => console.error(err.code)); // e.g., "FILE_NOT_FOUND"
 /// ```
 #[tauri::command]
-pub fn read_csv(path: String) -> Result<Value, serde_json::Value> {
-    file_ops::read_csv(&path).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
-        serde_json::json!({
-            "code": "UNKNOWN_ERROR",
-            "message": "Failed to serialize error"
-        })
-    }))
+pub fn read_csv(path: String) -> Result<Value, BackendError> {
+    file_ops::read_csv(&path)
 }
 
 /// Save configuration value
@@ -47,7 +43,7 @@ pub fn read_csv(path: String) -> Result<Value, serde_json::Value> {
 /// * `value` - Configuration value (any JSON-serializable)
 ///
 /// # Returns
-/// Empty result with structured error on failure
+/// Empty result with structured BackendError on failure
 ///
 /// # Example
 /// ```javascript
@@ -57,13 +53,8 @@ pub fn read_csv(path: String) -> Result<Value, serde_json::Value> {
 /// }).catch(err => console.error(err.code));
 /// ```
 #[tauri::command]
-pub fn save_config(key: String, value: Value) -> Result<(), serde_json::Value> {
-    file_ops::save_config(&key, value).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
-        serde_json::json!({
-            "code": "UNKNOWN_ERROR",
-            "message": "Failed to serialize error"
-        })
-    }))
+pub fn save_config(key: String, value: Value) -> Result<(), BackendError> {
+    file_ops::save_config(&key, value)
 }
 
 /// Load configuration value
@@ -72,7 +63,7 @@ pub fn save_config(key: String, value: Value) -> Result<(), serde_json::Value> {
 /// * `key` - Configuration key
 ///
 /// # Returns
-/// Configuration value or null if not found, with structured error on failure
+/// Configuration value or null if not found, with structured BackendError on failure
 ///
 /// # Example
 /// ```javascript
@@ -80,13 +71,8 @@ pub fn save_config(key: String, value: Value) -> Result<(), serde_json::Value> {
 ///   .catch(err => console.error(err.code));
 /// ```
 #[tauri::command]
-pub fn load_config(key: String) -> Result<Value, serde_json::Value> {
-    file_ops::load_config(&key).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
-        serde_json::json!({
-            "code": "UNKNOWN_ERROR",
-            "message": "Failed to serialize error"
-        })
-    }))
+pub fn load_config(key: String) -> Result<Value, BackendError> {
+    file_ops::load_config(&key)
 }
 
 // ============================================================================
@@ -99,7 +85,7 @@ pub fn load_config(key: String) -> Result<Value, serde_json::Value> {
 /// * `window` - Tauri window handle
 ///
 /// # Returns
-/// { x, y, width, height } or structured error
+/// { x, y, width, height } or structured BackendError
 ///
 /// # Example
 /// ```javascript
@@ -108,13 +94,8 @@ pub fn load_config(key: String) -> Result<Value, serde_json::Value> {
 /// console.log(`Window at ${pos.x}, ${pos.y}`);
 /// ```
 #[tauri::command]
-pub fn get_window_position(window: WebviewWindow) -> Result<window::WindowPosition, serde_json::Value> {
-    window::get_window_position(&window).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
-        serde_json::json!({
-            "code": "UNKNOWN_ERROR",
-            "message": "Failed to get window position"
-        })
-    }))
+pub fn get_window_position(window: WebviewWindow) -> Result<window::WindowPosition, BackendError> {
+    window::get_window_position(&window)
 }
 
 /// Set window position and size
@@ -124,7 +105,7 @@ pub fn get_window_position(window: WebviewWindow) -> Result<window::WindowPositi
 /// * `window` - Tauri window handle
 ///
 /// # Returns
-/// Empty result with structured error on failure
+/// Empty result with structured BackendError on failure
 ///
 /// # Example
 /// ```javascript
@@ -136,14 +117,9 @@ pub fn get_window_position(window: WebviewWindow) -> Result<window::WindowPositi
 pub fn set_window_position(
     position: window::WindowPosition,
     window: WebviewWindow,
-) -> Result<(), serde_json::Value> {
+) -> Result<(), BackendError> {
     let constrained = window::constrain_to_screen(position);
-    window::set_window_position(&window, constrained).map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
-        serde_json::json!({
-            "code": "UNKNOWN_ERROR",
-            "message": "Failed to set window position"
-        })
-    }))
+    window::set_window_position(&window, constrained)
 }
 
 // ============================================================================
@@ -176,6 +152,9 @@ pub fn set_window_position(
 /// - `message`: Human-readable status
 /// - `details`: Optional error details
 ///
+/// # Errors
+/// Returns BackendError if system permission check completely fails
+///
 /// # Example
 /// ```javascript
 /// const result = await invoke('request_microphone_permission')
@@ -197,14 +176,8 @@ pub fn set_window_position(
 /// - CLAUDE.md § Edge Cases - EC-000 (First-time microphone permission)
 /// - CLAUDE.md § Edge Cases - EC-001 (Microphone unavailable)
 #[tauri::command]
-pub fn request_microphone_permission() -> Result<permissions::PermissionStatus, serde_json::Value> {
+pub fn request_microphone_permission() -> Result<permissions::PermissionStatus, BackendError> {
     permissions::request_microphone_permission()
-        .map_err(|e| serde_json::to_value(e).unwrap_or_else(|_| {
-            serde_json::json!({
-                "code": "PERMISSION_ERROR",
-                "message": "Failed to check microphone permission"
-            })
-        }))
 }
 
 // ============================================================================

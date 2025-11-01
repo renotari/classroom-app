@@ -1,1 +1,146 @@
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.86s
+   0.678084000s  INFO prepare_target{force=false package_id=classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri) target="classroom_management_tool_lib"}: cargo::core::compiler::fingerprint: fingerprint error for classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri)/Check { test: false }/TargetInner { ..: lib_target("classroom_management_tool_lib", ["staticlib", "cdylib", "rlib"], "C:\\Users\\renot\\swDevelopmentLocal\\classroom-app\\src-tauri\\src\\lib.rs", Edition2021) }
+   0.678545100s  INFO prepare_target{force=false package_id=classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri) target="classroom_management_tool_lib"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri\target\debug\.fingerprint\classroom-management-tool-15e30af406a32aab\lib-classroom_management_tool_lib`
+
+Caused by:
+    Impossibile trovare il file specificato. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_path
+   6: git_filter_source_path
+   7: git_filter_source_path
+   8: git_filter_source_path
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_filter_source_repo
+  12: git_filter_source_repo
+  13: git_filter_source_repo
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+   0.838719000s  INFO prepare_target{force=false package_id=windows v0.58.0 target="windows"}: cargo::core::compiler::fingerprint: fingerprint error for windows v0.58.0/Check { test: false }/TargetInner { tested: false, doctest: false, ..: lib_target("windows", ["lib"], "C:\\Users\\renot\\.cargo\\registry\\src\\index.crates.io-1949cf8c6b5b557f\\windows-0.58.0\\src\\lib.rs", Edition2021) }
+   0.838770200s  INFO prepare_target{force=false package_id=windows v0.58.0 target="windows"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri\target\debug\.fingerprint\windows-056d3ee385fc39fe\lib-windows`
+
+Caused by:
+    Impossibile trovare il file specificato. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_path
+   6: git_filter_source_path
+   7: git_filter_source_path
+   8: git_filter_source_path
+   9: git_filter_source_path
+  10: git_filter_source_repo
+  11: git_filter_source_repo
+  12: git_filter_source_repo
+  13: git_filter_source_repo
+  14: git_filter_source_repo
+  15: <unknown>
+  16: <unknown>
+  17: git_midx_writer_dump
+  18: git_filter_source_repo
+  19: git_midx_writer_dump
+  20: BaseThreadInitThunk
+  21: RtlUserThreadStart
+   0.841953600s  INFO prepare_target{force=false package_id=classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri) target="classroom_management_tool_lib"}: cargo::core::compiler::fingerprint: fingerprint error for classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri)/Check { test: true }/TargetInner { ..: lib_target("classroom_management_tool_lib", ["staticlib", "cdylib", "rlib"], "C:\\Users\\renot\\swDevelopmentLocal\\classroom-app\\src-tauri\\src\\lib.rs", Edition2021) }
+   0.842001100s  INFO prepare_target{force=false package_id=classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri) target="classroom_management_tool_lib"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri\target\debug\.fingerprint\classroom-management-tool-6883a854ef3f9b89\test-lib-classroom_management_tool_lib`
+
+Caused by:
+    Impossibile trovare il file specificato. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_path
+   6: git_filter_source_path
+   7: git_filter_source_path
+   8: git_filter_source_path
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_filter_source_repo
+  12: git_filter_source_repo
+  13: git_filter_source_repo
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+   0.847477500s  INFO prepare_target{force=false package_id=classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri) target="classroom-management-tool"}: cargo::core::compiler::fingerprint: fingerprint error for classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri)/Check { test: false }/TargetInner { name: "classroom-management-tool", doc: true, ..: with_path("C:\\Users\\renot\\swDevelopmentLocal\\classroom-app\\src-tauri\\src\\main.rs", Edition2021) }
+   0.847521700s  INFO prepare_target{force=false package_id=classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri) target="classroom-management-tool"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri\target\debug\.fingerprint\classroom-management-tool-cd47c1f4b6ccc273\bin-classroom-management-tool`
+
+Caused by:
+    Impossibile trovare il file specificato. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_path
+   6: git_filter_source_path
+   7: git_filter_source_path
+   8: git_filter_source_path
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_filter_source_repo
+  12: git_filter_source_repo
+  13: git_filter_source_repo
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+   0.850555200s  INFO prepare_target{force=false package_id=classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri) target="classroom-management-tool"}: cargo::core::compiler::fingerprint: fingerprint error for classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri)/Check { test: true }/TargetInner { name: "classroom-management-tool", doc: true, ..: with_path("C:\\Users\\renot\\swDevelopmentLocal\\classroom-app\\src-tauri\\src\\main.rs", Edition2021) }
+   0.850602600s  INFO prepare_target{force=false package_id=classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri) target="classroom-management-tool"}: cargo::core::compiler::fingerprint:     err: failed to read `C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri\target\debug\.fingerprint\classroom-management-tool-d315715df2f7a1c6\test-bin-classroom-management-tool`
+
+Caused by:
+    Impossibile trovare il file specificato. (os error 2)
+
+Stack backtrace:
+   0: git_midx_writer_dump
+   1: git_midx_writer_dump
+   2: git_midx_writer_dump
+   3: git_midx_writer_dump
+   4: git_filter_source_repo
+   5: git_filter_source_path
+   6: git_filter_source_path
+   7: git_filter_source_path
+   8: git_filter_source_path
+   9: git_filter_source_repo
+  10: git_filter_source_repo
+  11: git_filter_source_repo
+  12: git_filter_source_repo
+  13: git_filter_source_repo
+  14: <unknown>
+  15: <unknown>
+  16: git_midx_writer_dump
+  17: git_filter_source_repo
+  18: git_midx_writer_dump
+  19: BaseThreadInitThunk
+  20: RtlUserThreadStart
+    Checking windows v0.58.0
+    Checking classroom-management-tool v0.1.0 (C:\Users\renot\swDevelopmentLocal\classroom-app\src-tauri)
+error: could not compile `classroom-management-tool` (lib test) due to 2 previous errors; 2 warnings emitted
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `classroom-management-tool` (lib) due to 2 previous errors; 2 warnings emitted

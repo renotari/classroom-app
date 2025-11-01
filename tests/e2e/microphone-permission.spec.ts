@@ -11,7 +11,7 @@
  * References: docs/edge-cases.md EC-000, EC-001
  */
 
-import { test, expect, BrowserContext } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 test.describe('Microphone Permission Flow', () => {
   test.beforeEach(async ({ page, context }) => {

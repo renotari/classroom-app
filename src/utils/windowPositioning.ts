@@ -1,3 +1,4 @@
+import { debug } from './debug';
 /**
  * Window Positioning Utilities
  * Gestisce EC-002: Windows Outside Screen Bounds
@@ -85,7 +86,7 @@ export function saveWindowPosition(
     positions[windowId] = position;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
   } catch (error) {
-    console.error('Failed to save window position:', error);
+    debug.error('Failed to save window position:', error);
   }
 }
 
@@ -97,7 +98,7 @@ export function getWindowPosition(windowId: string): WindowPosition | null {
     const positions = getStoredPositions();
     return positions[windowId] ?? null;
   } catch (error) {
-    console.error('Failed to get window position:', error);
+    debug.error('Failed to get window position:', error);
     return null;
   }
 }
@@ -128,7 +129,7 @@ export function clearWindowPosition(windowId: string): void {
     delete positions[windowId];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
   } catch (error) {
-    console.error('Failed to clear window position:', error);
+    debug.error('Failed to clear window position:', error);
   }
 }
 
@@ -139,7 +140,7 @@ export function clearAllWindowPositions(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (error) {
-    console.error('Failed to clear all window positions:', error);
+    debug.error('Failed to clear all window positions:', error);
   }
 }
 
@@ -151,7 +152,7 @@ function getStoredPositions(): Record<string, WindowPosition> {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : {};
   } catch (error) {
-    console.error('Failed to parse stored positions:', error);
+    debug.error('Failed to parse stored positions:', error);
     return {};
   }
 }

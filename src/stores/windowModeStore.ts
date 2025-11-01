@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * Window Mode Store (Zustand)
  * Gestisce la modalità della finestra (normal/overlay/fullscreen)
@@ -22,11 +23,11 @@ export const useWindowModeStore = create<WindowModeStore>()(
         const window = getCurrentWindow();
 
         try {
-          console.log(`Switching to ${mode} mode...`);
+          debug.log(`Switching to ${mode} mode...`);
 
           switch (mode) {
             case 'normal':
-              console.log('Setting normal mode...');
+              debug.log('Setting normal mode...');
               await window.setFullscreen(false);
               await window.setDecorations(true);
               await window.setAlwaysOnTop(false);
@@ -35,23 +36,23 @@ export const useWindowModeStore = create<WindowModeStore>()(
               setTimeout(async () => {
                 try {
                   await window.setSize(new LogicalSize(1200, 800));
-                  console.log('Window resized to 1200x800');
+                  debug.log('Window resized to 1200x800');
                 } catch (e) {
-                  console.error('Failed to resize:', e);
+                  debug.error('Failed to resize:', e);
                 }
               }, 100);
               break;
 
             case 'overlay':
-              console.log('Setting overlay mode...');
+              debug.log('Setting overlay mode...');
               await window.setFullscreen(false);
 
               // Prima ridimensiona, poi rimuovi decorations
               try {
                 await window.setSize(new LogicalSize(400, 600));
-                console.log('Window resized to 400x600');
+                debug.log('Window resized to 400x600');
               } catch (e) {
-                console.error('Failed to resize to overlay size:', e);
+                debug.error('Failed to resize to overlay size:', e);
               }
 
               await window.setDecorations(false);
@@ -59,7 +60,7 @@ export const useWindowModeStore = create<WindowModeStore>()(
               break;
 
             case 'fullscreen':
-              console.log('Setting fullscreen mode...');
+              debug.log('Setting fullscreen mode...');
               await window.setDecorations(false);
               await window.setAlwaysOnTop(false);
               await window.setFullscreen(true);
@@ -67,9 +68,9 @@ export const useWindowModeStore = create<WindowModeStore>()(
           }
 
           set({ mode });
-          console.log(`Window mode set to: ${mode}`);
+          debug.log(`Window mode set to: ${mode}`);
         } catch (error) {
-          console.error('Failed to set window mode:', error);
+          debug.error('Failed to set window mode:', error);
         }
       },
     }),

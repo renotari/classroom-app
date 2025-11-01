@@ -41,7 +41,11 @@ export default [
         clearInterval: 'readonly',
         alert: 'readonly',
         getComputedStyle: 'readonly',
-        fetch: 'readonly'
+        fetch: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        performance: 'readonly',
+        global: 'readonly'
       }
     },
     settings: {

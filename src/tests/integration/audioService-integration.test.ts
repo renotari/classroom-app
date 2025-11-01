@@ -34,6 +34,9 @@ describe("AudioService Integration - Singleton Pattern across services", () => {
     const audioService = AudioService.getInstance();
     const monitoringService = AudioMonitoringService.getInstance();
 
+    // Verify both services are instantiated
+    expect(monitoringService).toBeDefined();
+
     // Get their AudioContext instances
     const audioContext1 = audioService.getContext();
     // AudioMonitoringService uses AudioService internally, so verify same instance
@@ -50,6 +53,7 @@ describe("AudioService Integration - Singleton Pattern across services", () => {
 
     // Create monitoring service (depends on AudioService)
     const monitoring = AudioMonitoringService.getInstance();
+    expect(monitoring).toBeDefined();
 
     // Try to get AudioService again
     const service2 = AudioService.getInstance();
@@ -66,6 +70,7 @@ describe("AudioService Integration - Singleton Pattern across services", () => {
 
     const service1 = AudioService.getInstance();
     const monitoring = AudioMonitoringService.getInstance();
+    expect(monitoring).toBeDefined();
 
     // Get the AudioContext from both
     const ctx1 = service1.getContext();
@@ -86,7 +91,8 @@ describe("AudioService Integration - Singleton Pattern across services", () => {
       const audio = AudioService.getInstance();
       contexts.push(audio.getContext());
 
-      const monitoring = AudioMonitoringService.getInstance();
+      // Create monitoring service (verifies singleton doesn't create new context)
+      AudioMonitoringService.getInstance();
       const monCtx = AudioService.getInstance().getContext();
       contexts.push(monCtx);
     }
@@ -101,6 +107,7 @@ describe("AudioService Integration - Singleton Pattern across services", () => {
   it("should have AudioMonitoringService depend on AudioService singleton", () => {
     // Create monitoring service first
     const monitoring = AudioMonitoringService.getInstance();
+    expect(monitoring).toBeDefined();
 
     // Create audio service after
     const audio = AudioService.getInstance();
@@ -116,6 +123,7 @@ describe("AudioService Integration - Singleton Pattern across services", () => {
   it("should keep AudioContext in running state across services", async () => {
     const audio = AudioService.getInstance();
     const monitoring = AudioMonitoringService.getInstance();
+    expect(monitoring).toBeDefined();
 
     const context1 = audio.getContext();
     const context2 = AudioService.getInstance().getContext();
@@ -135,7 +143,8 @@ describe("AudioService Integration - Singleton Pattern across services", () => {
   describe("Master gain node sharing", () => {
     it("should share master gain node between services", () => {
       const audio = AudioService.getInstance();
-      const monitoring = AudioMonitoringService.getInstance();
+      // Instantiate monitoring service to verify it shares the same gain
+      AudioMonitoringService.getInstance();
 
       // Both should be able to access and use the gain
       const masterGain = audio.getMasterGain();
@@ -169,7 +178,7 @@ describe("AudioService Integration - Singleton Pattern across services", () => {
         // Try an operation
         await ctx.suspend();
         await ctx.resume();
-      } catch (error) {
+      } catch {
         // Even on error, should keep same instance
         const audio2 = AudioService.getInstance();
         expect(audio2).toBe(audio);
@@ -180,8 +189,8 @@ describe("AudioService Integration - Singleton Pattern across services", () => {
       const audio1 = AudioService.getInstance();
       const ctx1 = audio1.getContext();
 
-      // Create monitoring service (may have internal errors)
-      const monitoring = AudioMonitoringService.getInstance();
+      // Create monitoring service (may have internal errors but shouldn't create new context)
+      AudioMonitoringService.getInstance();
 
       // Should still be same context
       const audio2 = AudioService.getInstance();

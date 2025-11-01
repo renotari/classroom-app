@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * FASE 6: useSemaphore Hook
  *
@@ -63,7 +64,7 @@ export function useSemaphore(): UseSemaphoreReturn {
     if (redAbove > yellowAbove) {
       setAutoThresholdsStore(redAbove, yellowAbove);
     } else {
-      console.warn('useSemaphore: redAbove deve essere > yellowAbove');
+      debug.warn('useSemaphore: redAbove deve essere > yellowAbove');
     }
   }, [setAutoThresholdsStore]);
 

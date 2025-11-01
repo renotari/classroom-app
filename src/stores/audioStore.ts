@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * Audio Store - Zustand
  *
@@ -103,7 +104,7 @@ export const useAudioStore = create<AudioStoreState>()(
         if (SOUND_PACKS[packKey]) {
           set({ selectedSoundPack: packKey });
         } else {
-          console.warn(`[AudioStore] Unknown sound pack: ${packKey}`);
+          debug.warn(`[AudioStore] Unknown sound pack: ${packKey}`);
         }
       },
 

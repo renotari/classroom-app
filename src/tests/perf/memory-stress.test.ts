@@ -20,12 +20,14 @@ import { describe, it, expect, beforeAll, afterEach } from 'vitest';
  * - <100MB RAM usage (idle)
  * - <5% CPU (idle)
  * - <100ms response time
+ *
+ * Note: MEMORY_TARGETS defined here for future Phase 14 stress testing
  */
-const MEMORY_TARGETS = {
-  idle: 100 * 1024 * 1024, // 100 MB
-  monitoring: 120 * 1024 * 1024, // 120 MB (with monitoring)
-  maxGrowthPerHour: 5 * 1024 * 1024, // 5 MB/hour acceptable drift
-} as const;
+// const MEMORY_TARGETS = {
+//   idle: 100 * 1024 * 1024, // 100 MB
+//   monitoring: 120 * 1024 * 1024, // 120 MB (with monitoring)
+//   maxGrowthPerHour: 5 * 1024 * 1024, // 5 MB/hour acceptable drift
+// } as const;
 
 /**
  * Get current memory usage in bytes
@@ -36,7 +38,7 @@ const MEMORY_TARGETS = {
  * - V8 heap snapshots (for Tauri backend)
  */
 function getMemoryUsage(): number {
-  if (typeof performance !== 'undefined' && (performance as any).memory) {
+  if (typeof performance !== 'undefined' && 'memory' in performance) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (performance as any).memory.usedJSHeapSize;
   }
@@ -44,16 +46,17 @@ function getMemoryUsage(): number {
 }
 
 describe('Memory Stress Testing (EC-004)', () => {
-  let baselineMemory: number;
+  // Baseline memory tracking (used in Phase 14 full stress testing)
+  // let baselineMemory: number;
 
   beforeAll(() => {
     // Get baseline memory before any tests run
     // Force garbage collection if available
-    if (global.gc) {
-      global.gc();
+    if (typeof global !== 'undefined' && 'gc' in global) {
+      (global as { gc: () => void }).gc();
     }
 
-    baselineMemory = getMemoryUsage();
+    // baselineMemory = getMemoryUsage();
   });
 
   it('should record memory baseline for idle state', () => {
@@ -136,7 +139,7 @@ describe('Memory Stress Testing (EC-004)', () => {
   describe('Memory profiling infrastructure', () => {
     it('should provide memory measurement hooks', () => {
       // Verify performance API is available
-      const hasMemoryAPI = typeof performance !== 'undefined' && (performance as any).memory;
+      const hasMemoryAPI = typeof performance !== 'undefined' && 'memory' in performance;
 
       if (!hasMemoryAPI) {
         console.warn('[PERF] Memory API not available in test environment - Phase 14 will use Chrome DevTools');
@@ -169,7 +172,7 @@ describe('Memory Stress Testing (EC-004)', () => {
 
   afterEach(() => {
     // Optional: Log memory after each test
-    if (process.env.DEBUG_MEMORY) {
+    if (typeof process !== 'undefined' && process.env?.DEBUG_MEMORY) {
       const currentMemory = getMemoryUsage();
       console.log(`[PERF] Post-test memory: ${(currentMemory / 1024 / 1024).toFixed(2)} MB`);
     }

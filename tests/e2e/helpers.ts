@@ -191,7 +191,7 @@ export async function getStoredPreference(
   page: Page,
   storeName: string,
   key: string
-): Promise<any> {
+): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   return await page.evaluate(
     ({ store, property }) => {
       const stored = localStorage.getItem(store);
@@ -283,7 +283,7 @@ export async function grantMicrophonePermission(page: Page) {
 /**
  * Deny microphone permission simulation (for testing error handling)
  */
-export async function denyMicrophonePermission(page: Page) {
+export async function denyMicrophonePermission(_page: Page) {
   // Note: This requires setting up during context creation
   // See playwright.config.ts for permission handling
 }
@@ -326,7 +326,8 @@ export async function waitForText(page: Page, text: string, timeout: number = 50
 export async function getTextContent(page: Page, selector: string): Promise<string> {
   const element = page.locator(selector);
   await element.waitFor({ state: 'visible' });
-  return await element.textContent();
+  const text = await element.textContent();
+  return text ?? '';
 }
 
 /**

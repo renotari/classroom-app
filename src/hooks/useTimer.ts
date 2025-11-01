@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * useTimer Hook
  * Hook personalizzato per gestire il timer con setInterval e cleanup automatico
@@ -10,7 +11,7 @@ import { useTimerStore } from '../stores/timerStore';
 // Debug logging (disabile in production)
 const DEBUG_TIMER = import.meta.env.DEV;
 const debugLog = (msg: string) => {
-  if (DEBUG_TIMER) console.log(`[Timer] ${msg}`);
+  if (DEBUG_TIMER) debug.log(`[Timer] ${msg}`);
 };
 
 /**

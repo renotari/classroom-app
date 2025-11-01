@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * useNoiseMeter Hook
  * Manages noise monitoring lifecycle and integration with AudioMonitoringService + store
@@ -82,7 +83,7 @@ export function useNoiseMeter(): UseNoiseMeterReturn {
   // Start monitoring
   const startMonitoring = useCallback(async (): Promise<boolean> => {
     if (!monitoringService.current) {
-      console.error('AudioMonitoringService not initialized');
+      debug.error('AudioMonitoringService not initialized');
       return false;
     }
 
@@ -90,7 +91,7 @@ export function useNoiseMeter(): UseNoiseMeterReturn {
     if (permissionStatus !== 'granted') {
       const result = await requestPermission();
       if (result !== 'granted') {
-        console.error('Microphone permission not granted');
+        debug.error('Microphone permission not granted');
         setMicrophonePermission('denied');
         return false;
       }
@@ -104,7 +105,7 @@ export function useNoiseMeter(): UseNoiseMeterReturn {
       // Start monitoring
       const started = monitoringService.current.startMonitoring(mediaStream);
       if (!started) {
-        console.error('Failed to start monitoring');
+        debug.error('Failed to start monitoring');
         return false;
       }
 
@@ -121,7 +122,7 @@ export function useNoiseMeter(): UseNoiseMeterReturn {
       setIsMonitoring(true);
       return true;
     } catch (error) {
-      console.error('Error starting monitoring:', error);
+      debug.error('Error starting monitoring:', error);
       setIsMonitoring(false);
       return false;
     }
@@ -153,7 +154,7 @@ export function useNoiseMeter(): UseNoiseMeterReturn {
   // Calibrate
   const calibrate = useCallback(() => {
     if (!monitoringService.current || !isMonitoring) {
-      console.warn('Cannot calibrate - not monitoring');
+      debug.warn('Cannot calibrate - not monitoring');
       return;
     }
 

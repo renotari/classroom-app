@@ -121,24 +121,63 @@ fn request_microphone_permission_windows() -> Result<PermissionStatus, BackendEr
 
 #[cfg(target_os = "windows")]
 fn check_windows_audio_devices() -> Result<(bool, bool), String> {
-    use std::process::Command;
+    // Use Windows COM APIs to enumerate audio devices
+    // This replaces the PowerShell approach which is fragile and may not be available
+    // in restricted environments.
 
-    // PowerShell command to enumerate audio input devices
-    let output = Command::new("powershell")
-        .args(&[
-            "-Command",
-            "Get-PnpDevice -PNPClass AudioEndpoint | Where-Object { $_.Name -like '*Microphone*' -or $_.Description -like '*Recording*' } | Measure-Object | Select-Object -ExpandProperty Count"
-        ])
-        .output()
-        .map_err(|e| format!("Failed to enumerate audio devices: {}", e))?;
+    use windows::Win32::Media::Audio::*;
+    use windows::Win32::System::Com::*;
 
-    if output.status.success() {
-        let count_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
-        let device_count: usize = count_str.parse().unwrap_or(0);
-        Ok((device_count > 0, device_count > 0))
-    } else {
-        // Fallback: assume device is available if we can't check
-        Ok((true, true))
+    unsafe {
+        // Initialize COM
+        let hr = CoInitializeEx(None, COINIT_MULTITHREADED);
+        // Allow RPC_E_CHANGED_MODE which means COM was already initialized
+        if hr.is_err() {
+            // Try to continue even if COM initialization fails
+            // Some environments may have COM already initialized
+        }
+
+        // Create device enumerator
+        let enumerator: IMMDeviceEnumerator = match CoCreateInstance(
+            &MMDeviceEnumerator,
+            None,
+            CLSCTX_ALL
+        ) {
+            Ok(e) => e,
+            Err(e) => {
+                CoUninitialize();
+                return Err(format!("Failed to create device enumerator: {:?}", e));
+            }
+        };
+
+        // Enumerate audio capture devices
+        // Note: DEVICE_STATE values are u32, so we use bitwise OR
+        let device_state_mask = DEVICE_STATE_ACTIVE.0 | DEVICE_STATE_UNPLUGGED.0;
+        let collection = match enumerator.EnumAudioEndpoints(
+            eCapture,  // Capture devices (microphones)
+            DEVICE_STATE(device_state_mask)  // Active or unplugged devices
+        ) {
+            Ok(c) => c,
+            Err(e) => {
+                CoUninitialize();
+                return Err(format!("Failed to enumerate audio endpoints: {:?}", e));
+            }
+        };
+
+        // Get device count
+        let count = match collection.GetCount() {
+            Ok(c) => c,
+            Err(e) => {
+                CoUninitialize();
+                return Err(format!("Failed to get device count: {:?}", e));
+            }
+        };
+
+        CoUninitialize();
+
+        // If we found any capture devices, microphone is available and granted
+        let has_devices = count > 0;
+        Ok((has_devices, has_devices))
     }
 }
 

@@ -1,3 +1,4 @@
+import { debug, DEBUG } from '../utils/debug';
 /**
  * AudioMonitoringService - Singleton pattern
  *
@@ -16,7 +17,6 @@
 
 import { AudioService } from './audioService';
 
-const DEBUG = false; // Set to true for console logs
 
 /**
  * Audio monitoring configuration
@@ -80,8 +80,8 @@ export class AudioMonitoringService {
     };
 
     if (DEBUG) {
-      console.log('[AudioMonitoringService] Singleton instance created');
-      console.log(`[AudioMonitoringService] Using shared AudioContext from AudioService`);
+      debug.log('[AudioMonitoringService] Singleton instance created');
+      debug.log(`[AudioMonitoringService] Using shared AudioContext from AudioService`);
     }
   }
 
@@ -103,7 +103,7 @@ export class AudioMonitoringService {
    */
   startMonitoring(mediaStream: MediaStream): boolean {
     if (this.isMonitoring) {
-      if (DEBUG) console.log('[AudioMonitoringService] Already monitoring, ignoring start request');
+      if (DEBUG) debug.log('[AudioMonitoringService] Already monitoring, ignoring start request');
       return false;
     }
 
@@ -111,7 +111,7 @@ export class AudioMonitoringService {
       // Resume AudioContext if suspended (required by some browsers)
       if (this.audioContext.state === 'suspended') {
         this.audioContext.resume().catch((err) => {
-          console.warn('[AudioMonitoringService] Failed to resume AudioContext:', err);
+          debug.warn('[AudioMonitoringService] Failed to resume AudioContext:', err);
         });
       }
 
@@ -139,14 +139,14 @@ export class AudioMonitoringService {
       this.updateLevel();
 
       if (DEBUG) {
-        console.log('[AudioMonitoringService] Monitoring started');
-        console.log(`[AudioMonitoringService] FFT size: ${this.config.fftSize}`);
-        console.log(`[AudioMonitoringService] Buffer length: ${bufferLength}`);
+        debug.log('[AudioMonitoringService] Monitoring started');
+        debug.log(`[AudioMonitoringService] FFT size: ${this.config.fftSize}`);
+        debug.log(`[AudioMonitoringService] Buffer length: ${bufferLength}`);
       }
 
       return true;
     } catch (error) {
-      console.error('[AudioMonitoringService] Error starting monitoring:', error);
+      debug.error('[AudioMonitoringService] Error starting monitoring:', error);
       this.isMonitoring = false;
       return false;
     }
@@ -191,10 +191,10 @@ export class AudioMonitoringService {
       this.monitoringCallbacks = [];
 
       if (DEBUG) {
-        console.log('[AudioMonitoringService] Monitoring stopped');
+        debug.log('[AudioMonitoringService] Monitoring stopped');
       }
     } catch (error) {
-      console.error('[AudioMonitoringService] Error stopping monitoring:', error);
+      debug.error('[AudioMonitoringService] Error stopping monitoring:', error);
     }
   }
 
@@ -286,7 +286,7 @@ export class AudioMonitoringService {
    */
   calibrate(): void {
     if (!this.isMonitoring) {
-      console.warn('[AudioMonitoringService] Cannot calibrate - not monitoring');
+      debug.warn('[AudioMonitoringService] Cannot calibrate - not monitoring');
       return;
     }
 
@@ -295,7 +295,7 @@ export class AudioMonitoringService {
     this.isCalibrated = true;
 
     if (DEBUG) {
-      console.log('[AudioMonitoringService] Calibrated. Baseline level:', this.baselineLevel);
+      debug.log('[AudioMonitoringService] Calibrated. Baseline level:', this.baselineLevel);
     }
   }
 
@@ -367,5 +367,6 @@ export class AudioMonitoringService {
  * WARNING: Only use in test environment!
  */
 export function resetAudioMonitoringServiceForTesting(): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (AudioMonitoringService as any).instance = undefined;
 }

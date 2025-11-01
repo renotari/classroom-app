@@ -1,3 +1,4 @@
+import { debug } from '../../utils/debug';
 /**
  * AudioSettingsPanel Component
  * Displays audio settings controls for Phase 4 Audio System
@@ -32,7 +33,7 @@ export function AudioSettingsPanel() {
       const audioService = AudioService.getInstance();
       await audioService.playAlert('timerEnd');
     } catch (error) {
-      console.error('Failed to play test alert:', error);
+      debug.error('Failed to play test alert:', error);
     }
   };
 

@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * Hook: useAudioService
  *
@@ -42,7 +43,7 @@ export const useAudioService = () => {
       try {
         await audioService.playAlert(soundUrl, callbacks);
       } catch (error) {
-        console.error('[useAudioService] Error playing alert:', error);
+        debug.error('[useAudioService] Error playing alert:', error);
         callbacks?.onError?.(error as AudioError);
       }
     },
@@ -66,7 +67,7 @@ export const useAudioService = () => {
       try {
         await audioService.playBackgroundMusic(url, backgroundMusicVolume);
       } catch (error) {
-        console.error('[useAudioService] Error playing background music:', error);
+        debug.error('[useAudioService] Error playing background music:', error);
       }
     },
     [backgroundMusicEnabled, backgroundMusicVolume]

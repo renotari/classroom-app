@@ -1,3 +1,4 @@
+import { debug } from '../../utils/debug';
 /**
  * TitleBar Component
  * Custom title bar con drag region e window controls
@@ -15,9 +16,9 @@ export function TitleBar() {
   useEffect(() => {
     try {
       windowRef.current = getCurrentWindow();
-    } catch (error) {
+    } catch {
       // Silently fail in test environment where Tauri is not available
-      console.debug('[TitleBar] Tauri window not available (expected in tests)');
+      debug.log('[TitleBar] Tauri window not available (expected in tests)');
     }
   }, []);
 
@@ -26,7 +27,7 @@ export function TitleBar() {
     try {
       await windowRef.current.minimize();
     } catch (error) {
-      console.error('Failed to minimize:', error);
+      debug.error('Failed to minimize:', error);
     }
   };
 
@@ -40,7 +41,7 @@ export function TitleBar() {
         await windowRef.current.maximize();
       }
     } catch (error) {
-      console.error('Failed to maximize/unmaximize:', error);
+      debug.error('Failed to maximize/unmaximize:', error);
     }
   };
 
@@ -49,7 +50,7 @@ export function TitleBar() {
     try {
       await windowRef.current.close();
     } catch (error) {
-      console.error('Failed to close:', error);
+      debug.error('Failed to close:', error);
     }
   };
 

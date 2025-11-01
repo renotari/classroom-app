@@ -23,7 +23,15 @@
       "Bash(cargo test:*)",
       "Bash(npm test)",
       "Bash(npm test:*)",
-      "Bash(npm run test:e2e:*)"
+      "Bash(npm run test:e2e:*)",
+      "WebSearch",
+      "WebFetch(domain:www.anthropic.com)",
+      "WebFetch(domain:apidog.com)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :1420)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(cargo check:*)"
     ],
     "deny": [],
     "ask": []

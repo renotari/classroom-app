@@ -75,8 +75,8 @@ test.describe('Noise Monitoring Flow', () => {
     // Wait for monitoring to start
     await page.waitForTimeout(500);
 
-    // Look for color indicator and status
-    const colorIndicator = page.locator('[data-testid*="noise-color"]');
+    // Look for status indicator (color indicator also exists but status is more reliable)
+    // const colorIndicator = page.locator('[data-testid*="noise-color"]');
     const statusIndicator = page.locator('[data-testid="noise-status-indicator"]');
 
     // At least status should be visible
@@ -121,7 +121,8 @@ test.describe('Noise Monitoring Flow', () => {
 
     // Try to find threshold settings
     const thresholdSettings = page.locator('[data-testid="threshold-settings"]');
-    const hasThresholdSettings = await thresholdSettings.isVisible({ timeout: 1000 }).catch(() => false);
+    // Check if threshold settings visible (result unused in this placeholder test)
+    await thresholdSettings.isVisible({ timeout: 1000 }).catch(() => false);
 
     // Should show threshold settings or at least not error
     expect(true).toBeTruthy();
@@ -161,7 +162,7 @@ test.describe('Noise Monitoring Flow', () => {
           // Just verify the button exists and is disabled
           expect(isDisabled).toBe(true);
         }
-      } catch (error) {
+      } catch {
         // Button interaction failed, which is acceptable in test environment
         // Just verify the button exists
         expect(isVisible).toBe(true);

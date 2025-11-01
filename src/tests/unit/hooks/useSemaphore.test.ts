@@ -334,6 +334,7 @@ describe('useSemaphore Hook', () => {
 
       // Set noise to null (mic disconnected)
       act(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         useNoiseStore.setState(({ currentLevel: 0 }) as any); // Simulate null
       });
 

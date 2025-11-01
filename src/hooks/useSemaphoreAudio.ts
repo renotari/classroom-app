@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * FASE 6: useSemaphoreAudio Hook
  *
@@ -32,7 +33,7 @@ export function useSemaphoreAudio({ enabled, currentColor }: UseSemaphoreAudioOp
       // Usa fallback beep tone se file non disponibile
       // AudioService già gestisce fallback in playAlert()
       audioService.playAlert('semaphore-change').catch((err: unknown) => {
-        console.warn('useSemaphoreAudio: Failed to play sound alert', err);
+        debug.warn('useSemaphoreAudio: Failed to play sound alert', err);
       });
 
       previousColorRef.current = currentColor;

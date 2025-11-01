@@ -1,3 +1,4 @@
+import { debug } from '../utils/debug';
 /**
  * Timer Store (Zustand)
  * Gestisce lo stato del timer con persistence su localStorage
@@ -10,7 +11,7 @@ import type { TimerState, TimerConfig } from '../types/timer.types';
 // Debug logging (disabile in production)
 const DEBUG_TIMER = import.meta.env.DEV;
 const debugLog = (msg: string) => {
-  if (DEBUG_TIMER) console.log(`[TimerStore] ${msg}`);
+  if (DEBUG_TIMER) debug.log(`[TimerStore] ${msg}`);
 };
 
 interface TimerStore extends TimerState {
@@ -53,7 +54,7 @@ export const useTimerStore = create<TimerStore>()(
       setDuration: (seconds: number) => {
         if (seconds <= 0) {
           const error = new Error('Timer duration must be > 0 seconds');
-          console.error(error);
+          debug.error(error);
           throw error;
         }
 

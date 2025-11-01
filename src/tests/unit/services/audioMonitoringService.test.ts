@@ -14,7 +14,7 @@ const createMockMediaStream = (): MediaStream => {
         stop: vi.fn(),
       },
     ],
-  } as any;
+  } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 describe('AudioMonitoringService', () => {
@@ -316,6 +316,7 @@ describe('AudioMonitoringService', () => {
 
     it('should handle missing media stream gracefully', () => {
       const service = AudioMonitoringService.getInstance();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = service.startMonitoring(null as any);
 
       expect(result).toBe(false);
