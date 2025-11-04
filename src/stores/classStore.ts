@@ -1,190 +1,295 @@
 /**
- * FASE 7: Class Management Store
+ * Class Management Store (Zustand)
+ * Manages classes, students, and absences with localStorage persistence
+ * FASE 7 - Class & Students Management
  *
- * State management for classes and students
- * - Manage multiple classes
- * - Student lists per class
- * - Absence tracking
- * - Import/export states
- *
- * TODO: Implement in FASE 7
  * Reference: docs/technical-spec.md section Class Management
  * Reference: docs/edge-cases.md EC-006, EC-009
  */
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { Class, Student } from '../types/class';
+import { createClass, createStudent } from '../types/class';
+import { debug } from '../utils/debug';
 
-export interface Student {
-  id: string;
-  name: string;
-  absent: boolean;
-  notes?: string;
-}
+// Debug logging (disabled in production)
+const DEBUG_CLASS = import.meta.env.DEV;
+const debugLog = (msg: string) => {
+  if (DEBUG_CLASS) debug.log(`[ClassStore] ${msg}`);
+};
 
-export interface ClassData {
-  id: string;
-  name: string;
-  students: Student[];
-  createdAt: number;
-  updatedAt: number;
-}
+interface ClassStoreState {
+  // State
+  classes: Class[];
+  selectedClassId: string | null;
 
-export interface ClassStoreState {
-  // Current selection
-  activeClassId: string | null;
+  // Computed getters
+  getSelectedClass: () => Class | null;
+  getPresentStudents: (classId?: string) => Student[];
+  getAbsentStudents: (classId?: string) => Student[];
+  getStudentCount: (classId?: string) => number;
 
-  // Classes data
-  classes: Map<string, ClassData>;
+  // Class management actions
+  addClass: (name: string) => string; // Returns new class ID
+  updateClass: (classId: string, updates: Partial<Pick<Class, 'name'>>) => void;
+  removeClass: (classId: string) => void;
+  selectClass: (classId: string) => void;
 
-  // Import state
-  importInProgress: boolean;
-  importError: string | null;
-
-  // Actions
-  createClass: (name: string) => string; // Returns classId
-  deleteClass: (id: string) => void;
-  selectClass: (id: string) => void;
-  addStudent: (classId: string, student: Student) => void;
+  // Student management actions
+  addStudent: (classId: string, firstName: string, lastName: string) => void;
+  updateStudent: (
+    classId: string,
+    studentId: string,
+    updates: Partial<Student>
+  ) => void;
   removeStudent: (classId: string, studentId: string) => void;
-  updateStudent: (classId: string, student: Student) => void;
+  importStudents: (classId: string, students: Student[]) => void;
+
+  // Absence management actions
   toggleAbsence: (classId: string, studentId: string) => void;
-  importFromCSV: (classId: string, csvText: string) => Promise<void>;
-  exportToCSV: (classId: string) => string;
+  setAbsence: (classId: string, studentId: string, isAbsent: boolean) => void;
+  resetAbsences: (classId: string) => void;
+
+  // Utility actions
   resetState: () => void;
 }
 
-const initialState = {
-  activeClassId: null,
-  classes: new Map(),
-  importInProgress: false,
-  importError: null,
+const INITIAL_STATE = {
+  classes: [],
+  selectedClassId: null,
 };
 
 export const useClassStore = create<ClassStoreState>()(
   persist(
     (set, get) => ({
-      ...initialState,
+      // Initial state
+      ...INITIAL_STATE,
 
-      createClass: (name: string) => {
-        const classId = `class_${Date.now()}`;
-        const newClass: ClassData = {
-          id: classId,
-          name,
-          students: [],
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        };
-        set((state) => {
-          const newClasses = new Map(state.classes);
-          newClasses.set(classId, newClass);
-          return { classes: newClasses, activeClassId: classId };
-        });
-        return classId;
+      // Computed getters
+      getSelectedClass: () => {
+        const { classes, selectedClassId } = get();
+        return classes.find((c) => c.id === selectedClassId) || null;
       },
 
-      deleteClass: (id: string) => {
-        set((state) => {
-          const newClasses = new Map(state.classes);
-          newClasses.delete(id);
-          const newActiveId = state.activeClassId === id ? null : state.activeClassId;
-          return { classes: newClasses, activeClassId: newActiveId };
-        });
+      getPresentStudents: (classId?: string) => {
+        const targetClassId = classId || get().selectedClassId;
+        if (!targetClassId) return [];
+
+        const targetClass = get().classes.find((c) => c.id === targetClassId);
+        if (!targetClass) return [];
+
+        return targetClass.students.filter((s) => !s.isAbsent);
       },
 
-      selectClass: (id: string) => {
-        set({ activeClassId: id });
+      getAbsentStudents: (classId?: string) => {
+        const targetClassId = classId || get().selectedClassId;
+        if (!targetClassId) return [];
+
+        const targetClass = get().classes.find((c) => c.id === targetClassId);
+        if (!targetClass) return [];
+
+        return targetClass.students.filter((s) => s.isAbsent);
       },
 
-      addStudent: (classId: string, student: Student) => {
-        set((state) => {
-          const classes = new Map(state.classes);
-          const classData = classes.get(classId);
-          if (classData) {
-            classData.students.push(student);
-            classData.updatedAt = Date.now();
-          }
-          return { classes };
-        });
+      getStudentCount: (classId?: string) => {
+        const targetClassId = classId || get().selectedClassId;
+        if (!targetClassId) return 0;
+
+        const targetClass = get().classes.find((c) => c.id === targetClassId);
+        return targetClass?.students.length || 0;
+      },
+
+      // Class management actions
+      addClass: (name: string) => {
+        const newClass = createClass(name);
+        debugLog(`Adding new class: ${name} (ID: ${newClass.id})`);
+
+        set((state) => ({
+          classes: [...state.classes, newClass],
+        }));
+
+        return newClass.id;
+      },
+
+      updateClass: (classId: string, updates: Partial<Pick<Class, 'name'>>) => {
+        debugLog(`Updating class ${classId}`);
+
+        set((state) => ({
+          classes: state.classes.map((c) =>
+            c.id === classId
+              ? { ...c, ...updates, updatedAt: new Date() }
+              : c
+          ),
+        }));
+      },
+
+      removeClass: (classId: string) => {
+        debugLog(`Removing class ${classId}`);
+
+        set((state) => ({
+          classes: state.classes.filter((c) => c.id !== classId),
+          // Deselect if removing selected class
+          selectedClassId:
+            state.selectedClassId === classId ? null : state.selectedClassId,
+        }));
+      },
+
+      selectClass: (classId: string) => {
+        debugLog(`Selecting class ${classId}`);
+
+        const classExists = get().classes.some((c) => c.id === classId);
+        if (!classExists) {
+          console.error(`[ClassStore] Class ${classId} not found`);
+          return;
+        }
+
+        set({ selectedClassId: classId });
+      },
+
+      // Student management actions
+      addStudent: (classId: string, firstName: string, lastName: string) => {
+        debugLog(`Adding student: ${firstName} ${lastName} to class ${classId}`);
+
+        const newStudent = createStudent(firstName, lastName);
+
+        set((state) => ({
+          classes: state.classes.map((c) =>
+            c.id === classId
+              ? {
+                  ...c,
+                  students: [...c.students, newStudent],
+                  updatedAt: new Date(),
+                }
+              : c
+          ),
+        }));
+      },
+
+      updateStudent: (
+        classId: string,
+        studentId: string,
+        updates: Partial<Student>
+      ) => {
+        debugLog(`Updating student ${studentId} in class ${classId}`);
+
+        set((state) => ({
+          classes: state.classes.map((c) =>
+            c.id === classId
+              ? {
+                  ...c,
+                  students: c.students.map((s) =>
+                    s.id === studentId ? { ...s, ...updates } : s
+                  ),
+                  updatedAt: new Date(),
+                }
+              : c
+          ),
+        }));
       },
 
       removeStudent: (classId: string, studentId: string) => {
-        set((state) => {
-          const classes = new Map(state.classes);
-          const classData = classes.get(classId);
-          if (classData) {
-            classData.students = classData.students.filter((s) => s.id !== studentId);
-            classData.updatedAt = Date.now();
-          }
-          return { classes };
-        });
+        debugLog(`Removing student ${studentId} from class ${classId}`);
+
+        set((state) => ({
+          classes: state.classes.map((c) =>
+            c.id === classId
+              ? {
+                  ...c,
+                  students: c.students.filter((s) => s.id !== studentId),
+                  updatedAt: new Date(),
+                }
+              : c
+          ),
+        }));
       },
 
-      updateStudent: (classId: string, student: Student) => {
-        set((state) => {
-          const classes = new Map(state.classes);
-          const classData = classes.get(classId);
-          if (classData) {
-            const index = classData.students.findIndex((s) => s.id === student.id);
-            if (index !== -1) {
-              classData.students[index] = student;
-              classData.updatedAt = Date.now();
-            }
-          }
-          return { classes };
-        });
+      importStudents: (classId: string, students: Student[]) => {
+        debugLog(
+          `Importing ${students.length} students to class ${classId}`
+        );
+
+        set((state) => ({
+          classes: state.classes.map((c) =>
+            c.id === classId
+              ? {
+                  ...c,
+                  students: [...c.students, ...students],
+                  updatedAt: new Date(),
+                }
+              : c
+          ),
+        }));
       },
 
+      // Absence management actions
       toggleAbsence: (classId: string, studentId: string) => {
-        set((state) => {
-          const classes = new Map(state.classes);
-          const classData = classes.get(classId);
-          if (classData) {
-            const student = classData.students.find((s) => s.id === studentId);
-            if (student) {
-              student.absent = !student.absent;
-              classData.updatedAt = Date.now();
-            }
-          }
-          return { classes };
-        });
+        debugLog(`Toggling absence for student ${studentId} in class ${classId}`);
+
+        set((state) => ({
+          classes: state.classes.map((c) =>
+            c.id === classId
+              ? {
+                  ...c,
+                  students: c.students.map((s) =>
+                    s.id === studentId ? { ...s, isAbsent: !s.isAbsent } : s
+                  ),
+                  updatedAt: new Date(),
+                }
+              : c
+          ),
+        }));
       },
 
-      importFromCSV: async (_classId: string, _csvText: string) => {
-        set({ importInProgress: true, importError: null });
-        try {
-          // TODO: Implement CSV parsing with Papaparse
-          // Expected format: name,email (optional)
-          // Should handle encoding detection (EC-006)
-          // Should validate max 30 students (EC-009)
-          set({ importInProgress: false });
-        } catch (error) {
-          set({
-            importInProgress: false,
-            importError: error instanceof Error ? error.message : 'Import failed',
-          });
-          throw error;
-        }
+      setAbsence: (classId: string, studentId: string, isAbsent: boolean) => {
+        debugLog(
+          `Setting absence for student ${studentId} in class ${classId}: ${isAbsent}`
+        );
+
+        set((state) => ({
+          classes: state.classes.map((c) =>
+            c.id === classId
+              ? {
+                  ...c,
+                  students: c.students.map((s) =>
+                    s.id === studentId ? { ...s, isAbsent } : s
+                  ),
+                  updatedAt: new Date(),
+                }
+              : c
+          ),
+        }));
       },
 
-      exportToCSV: (classId: string) => {
-        const state = get();
-        const classData = state.classes.get(classId);
-        if (!classData) return '';
+      resetAbsences: (classId: string) => {
+        debugLog(`Resetting all absences for class ${classId}`);
 
-        // CSV format: name,absent
-        const header = 'Name,Absent';
-        const rows = classData.students.map((s) => `${s.name},${s.absent ? 'yes' : 'no'}`);
-        return [header, ...rows].join('\n');
+        set((state) => ({
+          classes: state.classes.map((c) =>
+            c.id === classId
+              ? {
+                  ...c,
+                  students: c.students.map((s) => ({ ...s, isAbsent: false })),
+                  updatedAt: new Date(),
+                }
+              : c
+          ),
+        }));
       },
 
+      // Utility actions
       resetState: () => {
-        set(initialState);
+        debugLog('Resetting class store to initial state');
+        set(INITIAL_STATE);
       },
     }),
     {
-      name: 'class-store',
-      version: 1,
+      name: 'class-store', // localStorage key
+      // Exclude computed getters from persistence
+      partialize: (state) => ({
+        classes: state.classes,
+        selectedClassId: state.selectedClassId,
+      }),
     }
   )
 );

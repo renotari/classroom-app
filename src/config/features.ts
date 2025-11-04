@@ -78,9 +78,10 @@ export const EDGE_CASE_STATUS: Record<
     complete: true,
     resolvedCases: ["EC-011"], // Hotkey conflicts (keyboard shortcuts disabled in input fields)
   },
+  // FASE 7: UI Complete, tests in progress
   "fase-7": {
-    complete: false,
-    resolvedCases: [],
+    complete: false, // Will be true after tests complete
+    resolvedCases: ["EC-006", "EC-009"], // CSV encoding/dirty data, max 30 students validation
   },
 };
 
@@ -139,15 +140,18 @@ export const FEATURE_FLAGS = {
   semaphoreAutoMode: true,
   semaphoreShortcuts: true,
 
-  // FASE 7: Class Management ⏸️ NOT STARTED (estimated week 8-9)
-  // TODO: Implementare FASE 7 - Class Management
-  //  - Features: CSV import, student lists, random selection
-  //  - Timeline: Week 8-9 (2025-11-XX)
-  classManagement: false,
-  csvImport: false,
-  randomStudent: false,
-  absenceTracking: false,
-  studentAnimations: false,
+  // FASE 7: Class Management ✅ COMPLETATA (UI Complete - Tests in Progress)
+  // - Class CRUD operations (create, rename, delete)
+  // - CSV import with Papaparse (encoding detection, validation)
+  // - Student list management
+  // - Absence tracking with visual feedback
+  // - Edge cases: EC-006 (CSV encoding) handled, EC-009 (max 30 students) validated
+  // Note: Random student selection moved to Phase 8
+  classManagement: true,
+  csvImport: true,
+  randomStudent: false, // Phase 8
+  absenceTracking: true,
+  studentAnimations: false, // Phase 8
 
   // FASE 8: Group Generation ⏸️ NOT STARTED (estimated week 10-11)
   // TODO: Implementare FASE 8 - Group Generation

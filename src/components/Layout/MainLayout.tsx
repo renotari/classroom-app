@@ -20,6 +20,7 @@ import { TimerView } from '../Timer/TimerView';
 import { AudioPanel } from '../Audio/AudioPanel';
 import { NoiseMeterPanel } from '../NoiseMeter/NoiseMeterPanel';
 import { SemaphorePanel } from '../Semaphore/SemaphorePanel';
+import { ClassManagementPanel } from '../ClassManagement/ClassManagementPanel';
 
 export function MainLayout() {
   const [activeTab, setActiveTab] = useState<TabId>('timer');
@@ -151,10 +152,8 @@ function DisabledFeaturePlaceholder({
  * These will be replaced with actual components when feature flags are enabled
  */
 function ClassImplementation() {
-  // TODO: Implement ClassManagementPanel in Phase 7
-  return (
-    <DisabledFeaturePlaceholder feature="Class Management" phase={7} />
-  );
+  // Phase 7 - Class Management
+  return <ClassManagementPanel />;
 }
 
 function ToolsImplementation() {
