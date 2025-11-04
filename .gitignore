@@ -26,13 +26,12 @@ dist-ssr
 # Tauri
 src-tauri/target
 src-tauri/Cargo.lock
+target/
 
 # Testing
-coverage/*.json
-coverage/*.txt
-coverage/.tmp
-playwright-report
-test-results
+coverage/
+playwright-report/
+test-results/
 
 # Environment
 .env
