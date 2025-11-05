@@ -20,6 +20,7 @@ import { TimerView } from '../Timer/TimerView';
 import { AudioPanel } from '../Audio/AudioPanel';
 import { NoiseMeterPanel } from '../NoiseMeter/NoiseMeterPanel';
 import { SemaphorePanel } from '../Semaphore/SemaphorePanel';
+import { ClassManagementPanel } from '../ClassManagement';
 
 export function MainLayout() {
   const [activeTab, setActiveTab] = useState<TabId>('timer');
@@ -78,7 +79,7 @@ function TabContent({ activeTab }: TabContentProps) {
 
     case 'class':
       return FEATURE_FLAGS.classManagement ? (
-        <ClassImplementation />
+        <ClassManagementPanel />
       ) : (
         <DisabledFeaturePlaceholder feature="Class Management" phase={7} />
       );
@@ -147,16 +148,9 @@ function DisabledFeaturePlaceholder({
 }
 
 /**
- * Stub implementations for Phase 7+ features
+ * Stub implementations for Phase 8+ features
  * These will be replaced with actual components when feature flags are enabled
  */
-function ClassImplementation() {
-  // TODO: Implement ClassManagementPanel in Phase 7
-  return (
-    <DisabledFeaturePlaceholder feature="Class Management" phase={7} />
-  );
-}
-
 function ToolsImplementation() {
   // TODO: Implement Tools panel with Random Student, Groups, Dice in Phases 8-11
   return (

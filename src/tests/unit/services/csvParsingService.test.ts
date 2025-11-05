@@ -18,7 +18,6 @@ import {
   parseCSV,
   exportToCSV,
   validateCSVFile,
-  type CSVParseResult,
 } from '../../../services/csvParsingService';
 import type { Student } from '../../../stores/classStore';
 
@@ -35,11 +34,11 @@ Luca,true,Sick`;
       expect(result.success).toBe(true);
       expect(result.students).toHaveLength(3);
       expect(result.errors).toHaveLength(0);
-      expect(result.students[0].name).toBe('Marco');
-      expect(result.students[0].absent).toBe(false);
-      expect(result.students[1].name).toBe('Giulia');
-      expect(result.students[2].name).toBe('Luca');
-      expect(result.students[2].absent).toBe(true);
+      expect(result.students[0]!.name).toBe('Marco');
+      expect(result.students[0]!.absent).toBe(false);
+      expect(result.students[1]!.name).toBe('Giulia');
+      expect(result.students[2]!.name).toBe('Luca');
+      expect(result.students[2]!.absent).toBe(true);
     });
 
     it('should parse CSV with semicolon delimiter', () => {
@@ -52,8 +51,8 @@ Andrea;true;`;
       expect(result.success).toBe(true);
       expect(result.students).toHaveLength(2);
       expect(result.metadata.detectedDelimiter).toBe(';');
-      expect(result.students[0].name).toBe('Sofia');
-      expect(result.students[1].name).toBe('Andrea');
+      expect(result.students[0]!.name).toBe('Sofia');
+      expect(result.students[1]!.name).toBe('Andrea');
     });
 
     it('should parse CSV with tab delimiter', () => {
@@ -66,7 +65,7 @@ Francesco\tfalse\tGood`;
       expect(result.success).toBe(true);
       expect(result.students).toHaveLength(2);
       expect(result.metadata.detectedDelimiter).toBe('\t');
-      expect(result.students[0].name).toBe('Elena');
+      expect(result.students[0]!.name).toBe('Elena');
     });
 
     it('should parse CSV with only name column', () => {
@@ -79,10 +78,10 @@ Davide`;
 
       expect(result.success).toBe(true);
       expect(result.students).toHaveLength(3);
-      expect(result.students[0].name).toBe('Matteo');
-      expect(result.students[0].absent).toBe(false); // Default
-      expect(result.students[1].name).toBe('Chiara');
-      expect(result.students[2].name).toBe('Davide');
+      expect(result.students[0]!.name).toBe('Matteo');
+      expect(result.students[0]!.absent).toBe(false); // Default
+      expect(result.students[1]!.name).toBe('Chiara');
+      expect(result.students[2]!.name).toBe('Davide');
     });
   });
 
@@ -98,10 +97,10 @@ François,false,`;
 
       expect(result.success).toBe(true);
       expect(result.students).toHaveLength(4);
-      expect(result.students[0].name).toBe('Nicolò');
-      expect(result.students[1].name).toBe('Martìn');
-      expect(result.students[2].name).toBe('José');
-      expect(result.students[3].name).toBe('François');
+      expect(result.students[0]!.name).toBe('Nicolò');
+      expect(result.students[1]!.name).toBe('Martìn');
+      expect(result.students[2]!.name).toBe('José');
+      expect(result.students[3]!.name).toBe('François');
     });
 
     it('should handle names with accents (è, à, ò, ù)', () => {
@@ -115,10 +114,10 @@ Simòn`;
 
       expect(result.success).toBe(true);
       expect(result.students).toHaveLength(4);
-      expect(result.students[0].name).toBe('Renée');
-      expect(result.students[1].name).toBe('André');
-      expect(result.students[2].name).toBe('Zoè');
-      expect(result.students[3].name).toBe('Simòn');
+      expect(result.students[0]!.name).toBe('Renée');
+      expect(result.students[1]!.name).toBe('André');
+      expect(result.students[2]!.name).toBe('Zoè');
+      expect(result.students[3]!.name).toBe('Simòn');
     });
   });
 
@@ -130,7 +129,7 @@ Giovanni,false`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].name).toBe('Giovanni');
+      expect(result.students[0]!.name).toBe('Giovanni');
     });
 
     it('should recognize "nome" (Italian)', () => {
@@ -140,7 +139,7 @@ Francesca,false`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].name).toBe('Francesca');
+      expect(result.students[0]!.name).toBe('Francesca');
     });
 
     it('should recognize "student" column', () => {
@@ -150,7 +149,7 @@ Alessandro,false`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].name).toBe('Alessandro');
+      expect(result.students[0]!.name).toBe('Alessandro');
     });
   });
 
@@ -163,8 +162,8 @@ Alessandro,false`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].name).toBe('Marco');
-      expect(result.students[1].name).toBe('Giulia');
+      expect(result.students[0]!.name).toBe('Marco');
+      expect(result.students[1]!.name).toBe('Giulia');
     });
 
     it('should trim whitespace from headers', () => {
@@ -174,7 +173,7 @@ Marco,false,Good`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].name).toBe('Marco');
+      expect(result.students[0]!.name).toBe('Marco');
     });
 
     it('should skip empty lines', () => {
@@ -190,8 +189,8 @@ Giulia,false
 
       expect(result.success).toBe(true);
       expect(result.students).toHaveLength(2);
-      expect(result.students[0].name).toBe('Marco');
-      expect(result.students[1].name).toBe('Giulia');
+      expect(result.students[0]!.name).toBe('Marco');
+      expect(result.students[1]!.name).toBe('Giulia');
     });
   });
 
@@ -277,7 +276,7 @@ Marco,absent`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].absent).toBe(true);
+      expect(result.students[0]!.absent).toBe(true);
     });
 
     it('should parse absent as true for "assente" (Italian)', () => {
@@ -287,7 +286,7 @@ Marco,assente`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].absent).toBe(true);
+      expect(result.students[0]!.absent).toBe(true);
     });
 
     it('should parse absent as true for "true" string', () => {
@@ -297,7 +296,7 @@ Marco,true`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].absent).toBe(true);
+      expect(result.students[0]!.absent).toBe(true);
     });
 
     it('should parse absent as true for "1"', () => {
@@ -307,7 +306,7 @@ Marco,1`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].absent).toBe(true);
+      expect(result.students[0]!.absent).toBe(true);
     });
 
     it('should parse absent as false for "false", "0", empty', () => {
@@ -319,9 +318,9 @@ Luca,`;
       const result = parseCSV(csv);
 
       expect(result.success).toBe(true);
-      expect(result.students[0].absent).toBe(false);
-      expect(result.students[1].absent).toBe(false);
-      expect(result.students[2].absent).toBe(false);
+      expect(result.students[0]!.absent).toBe(false);
+      expect(result.students[1]!.absent).toBe(false);
+      expect(result.students[2]!.absent).toBe(false);
     });
   });
 

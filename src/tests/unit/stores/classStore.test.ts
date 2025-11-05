@@ -12,7 +12,7 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useClassStore, type Student, type ClassData } from '../../../stores/classStore';
+import { useClassStore, type Student } from '../../../stores/classStore';
 
 describe('classStore', () => {
   beforeEach(() => {
@@ -48,11 +48,10 @@ describe('classStore', () => {
     it('should create multiple classes', () => {
       const { result } = renderHook(() => useClassStore());
 
-      let class1Id: string = '';
       let class2Id: string = '';
 
       act(() => {
-        class1Id = result.current.createClass('Math 101');
+        result.current.createClass('Math 101');
         class2Id = result.current.createClass('Science 202');
       });
 
@@ -82,11 +81,10 @@ describe('classStore', () => {
       const { result } = renderHook(() => useClassStore());
 
       let class1Id: string = '';
-      let class2Id: string = '';
 
       act(() => {
         class1Id = result.current.createClass('Math 101');
-        class2Id = result.current.createClass('Science 202');
+        result.current.createClass('Science 202');
         result.current.selectClass(class1Id);
       });
 
@@ -104,11 +102,10 @@ describe('classStore', () => {
       const { result } = renderHook(() => useClassStore());
 
       let class1Id: string = '';
-      let class2Id: string = '';
 
       act(() => {
         class1Id = result.current.createClass('Math 101');
-        class2Id = result.current.createClass('Science 202');
+        result.current.createClass('Science 202');
       });
 
       act(() => {
@@ -200,7 +197,7 @@ describe('classStore', () => {
       });
 
       const classData = result.current.classes.get(classId);
-      expect(classData?.students[0].notes).toBe('Excellent student');
+      expect(classData?.students[0]!.notes).toBe('Excellent student');
     });
 
     it('should toggle student absence', () => {
@@ -226,14 +223,14 @@ describe('classStore', () => {
         result.current.toggleAbsence(classId, 'student-1');
       });
 
-      expect(result.current.classes.get(classId)?.students[0].absent).toBe(true);
+      expect(result.current.classes.get(classId)?.students[0]!.absent).toBe(true);
 
       // Toggle back to present
       act(() => {
         result.current.toggleAbsence(classId, 'student-1');
       });
 
-      expect(result.current.classes.get(classId)?.students[0].absent).toBe(false);
+      expect(result.current.classes.get(classId)?.students[0]!.absent).toBe(false);
     });
   });
 
@@ -257,11 +254,11 @@ Luca Verde,false,`;
 
       const classData = result.current.classes.get(classId);
       expect(classData?.students).toHaveLength(3);
-      expect(classData?.students[0].name).toBe('Marco Rossi');
-      expect(classData?.students[0].absent).toBe(false);
-      expect(classData?.students[1].name).toBe('Giulia Bianchi');
-      expect(classData?.students[1].absent).toBe(true);
-      expect(classData?.students[2].name).toBe('Luca Verde');
+      expect(classData?.students[0]!.name).toBe('Marco Rossi');
+      expect(classData?.students[0]!.absent).toBe(false);
+      expect(classData?.students[1]!.name).toBe('Giulia Bianchi');
+      expect(classData?.students[1]!.absent).toBe(true);
+      expect(classData?.students[2]!.name).toBe('Luca Verde');
     });
 
     it('should replace existing students on import', async () => {
@@ -289,8 +286,8 @@ New Student 2,false`;
 
       const classData = result.current.classes.get(classId);
       expect(classData?.students).toHaveLength(2);
-      expect(classData?.students[0].name).toBe('New Student 1');
-      expect(classData?.students[1].name).toBe('New Student 2');
+      expect(classData?.students[0]!.name).toBe('New Student 1');
+      expect(classData?.students[1]!.name).toBe('New Student 2');
     });
 
     it('should handle CSV import errors', async () => {
@@ -398,12 +395,10 @@ Marco,false`;
       });
 
       // Create classes in a single act
-      let class1Id: string = '';
-      let class2Id: string = '';
 
       act(() => {
-        class1Id = result.current.createClass('Math 101');
-        class2Id = result.current.createClass('Science 202');
+        result.current.createClass('Math 101');
+        result.current.createClass('Science 202');
       });
 
       // Verify both classes were created

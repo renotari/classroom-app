@@ -155,10 +155,13 @@ export const useClassStore = create<ClassStoreState>()(
             const studentIndex = classData.students.findIndex((s) => s.id === studentId);
             if (studentIndex !== -1) {
               const newStudents = [...classData.students];
-              newStudents[studentIndex] = {
-                ...newStudents[studentIndex],
-                absent: !newStudents[studentIndex].absent,
-              };
+              const currentStudent = newStudents[studentIndex];
+              if (currentStudent) {
+                newStudents[studentIndex] = {
+                  ...currentStudent,
+                  absent: !currentStudent.absent,
+                };
+              }
               classes.set(classId, {
                 ...classData,
                 students: newStudents,
