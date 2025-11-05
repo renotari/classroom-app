@@ -7,7 +7,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
 
-**Stato Sviluppo**: 🚧 In Development - FASE 5/15 completata (33.3%) ✅ Noise Monitoring Done
+**Stato Sviluppo**: 🚧 In Development - FASE 6/15 completata (40%) ✅ Semaphore System Done
 
 ---
 
@@ -21,7 +21,7 @@ Progettata per funzionare su schermi touch interattivi (STI) e laptop, con suppo
 
 ## ✨ Features
 
-### ✅ Completate (FASE 1-5)
+### ✅ Completate (FASE 1-6)
 
 - **🎨 Sistema Temi**: 6 temi colore personalizzabili
   - Blue Serenity (default), Forest Mist, Twilight
@@ -66,8 +66,18 @@ Progettata per funzionare su schermi touch interattivi (STI) e laptop, con suppo
   - 45+ unit tests (>75% coverage)
   - NoiseMeterPanel completo integrato in MainLayout
 
-### 🚧 In Roadmap (FASE 6-15)
-- 🚦 **Sistema Semaforo** - Traffic light per stato classe (rosso/giallo/verde)
+- **🚦 Sistema Semaforo**: Traffic light per stato classe
+  - 3 stati: Rosso (silenzio), Giallo (discussione tranquilla), Verde (lavoro gruppo)
+  - **Modalità Manuale**: Click controls + keyboard shortcuts (1, 2, 3)
+  - **Modalità Auto**: Reagisce automaticamente al livello di rumore
+  - Fullscreen projection mode per visualizzazione massima (tasto F)
+  - Sound alerts opzionali su cambio stato
+  - Configurazione soglie dinamica per auto mode
+  - Animazioni smooth con pulse effect su stato Red
+  - 23 unit tests (96.15% coverage)
+  - SemaphorePanel integrato in MainLayout con tab dedicato
+
+### 🚧 In Roadmap (FASE 7-15)
 - 👥 **Gestione Classi** - Import CSV, studenti, presenze/assenze
 - 🎲 **Random Student** - Selezione casuale con animazione
 - 🧑‍🤝‍🧑 **Group Generation** - Creazione gruppi con separation rules
@@ -83,7 +93,7 @@ Progettata per funzionare su schermi touch interattivi (STI) e laptop, con suppo
 | Framework | Tauri | 2.x |
 | Frontend | React | 19.1 |
 | Language | TypeScript | 5.8 (strict mode) |
-| Build Tool | Vite | 7.1 |
+| Build Tool | Vite | 7.2 |
 | Styling | Tailwind CSS | 4.1 |
 | State Management | Zustand | 5.0 |
 | Backend | Rust | (Tauri backend) |
