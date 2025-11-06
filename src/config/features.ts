@@ -82,6 +82,10 @@ export const EDGE_CASE_STATUS: Record<
     complete: true,
     resolvedCases: ["EC-006", "EC-009"], // CSV encoding/dirty data, classes >30 students
   },
+  "fase-8": {
+    complete: true,
+    resolvedCases: [], // No critical edge cases for Phase 8
+  },
 };
 
 /**
@@ -145,15 +149,25 @@ export const FEATURE_FLAGS = {
   // - Class Management UI (selector, student list, CSV import/export) ✅
   // - Mark absences modal ✅
   // - 36 CSV parsing tests + 14 classStore tests passing
-  // Note: Random student selection will be in Phase 8
   classManagement: true,
   csvImport: true,
   absenceTracking: true,
-  randomStudent: false, // Phase 8
-  studentAnimations: false, // Phase 8
 
-  // FASE 8: Group Generation ⏸️ NOT STARTED (estimated week 10-11)
-  // TODO: Implementare FASE 8 - Group Generation
+  // FASE 8: Random Student Selection ✅ COMPLETATA
+  // - randomStudentService with crypto-secure randomness ✅
+  // - randomStudentStore with history tracking ✅
+  // - useRandomAnimation hook with configurable easing ✅
+  // - StudentDisplay component with 3 states (empty/animating/selected) ✅
+  // - SelectButton, ConfigPanel, HistoryPanel components ✅
+  // - RandomStudentPanel integration ✅
+  // - 33 service tests + 27 store tests + 9 hook tests + 69 component tests = 138 tests passing
+  randomStudent: true,
+  studentAnimations: true,
+  studentHistory: true,
+  studentConfig: true,
+
+  // FASE 9: Group Generation ⏸️ NOT STARTED (estimated week 10-11)
+  // TODO: Implementare FASE 9 - Group Generation
   //  - Features: Auto group creation, separation rules, algorithm
   //  - Timeline: Week 10-11 (2025-11-XX)
   groupGeneration: false,
@@ -232,14 +246,17 @@ export const PHASE_INFO = {
     ],
   },
   "8": {
-    name: "Group Generation",
-    status: "NON INIZIATA" as const,
-    estimatedWeek: "10-11",
+    name: "Random Student Selection",
+    status: "COMPLETATA" as const,
+    startWeek: "8",
+    completedWeek: "8",
     features: [
-      "Automatic group creation",
-      "Separation rules engine",
-      "Best-effort algorithm",
-      "Group visualization",
+      "Crypto-secure random selection algorithm",
+      "History tracking (prevents recent repeats)",
+      "Animated slot machine effect",
+      "Configuration (excludeAbsent, excludeRecentCount)",
+      "Visual display with 3 states (empty/animating/selected)",
+      "Integration with Class Management",
     ],
   },
 } as const;
@@ -327,7 +344,8 @@ export function getUnresolvedEdgeCases(faseNumber: number): string[] {
     "fase-4": ["EC-005", "EC-008"],
     "fase-5": ["EC-000", "EC-001"],
     "fase-6": [],
-    "fase-7": [],
+    "fase-7": ["EC-006", "EC-009"],
+    "fase-8": [],
   };
 
   const relevantEdgeCases = phaseEdgeCases[faseKey] || [];

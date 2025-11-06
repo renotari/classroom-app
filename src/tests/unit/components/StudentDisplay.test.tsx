@@ -100,7 +100,7 @@ describe('StudentDisplay', () => {
           students={mockStudents}
           currentIndex={0}
           isAnimating={false}
-          finalStudent={mockStudents[0]}
+          finalStudent={mockStudents[0]!}
         />
       );
 
@@ -113,7 +113,7 @@ describe('StudentDisplay', () => {
           students={mockStudents}
           currentIndex={0}
           isAnimating={false}
-          finalStudent={mockStudents[1]}
+          finalStudent={mockStudents[1]!}
         />
       );
 
@@ -126,7 +126,7 @@ describe('StudentDisplay', () => {
           students={mockStudents}
           currentIndex={2}
           isAnimating={false}
-          finalStudent={mockStudents[2]}
+          finalStudent={mockStudents[2]!}
         />
       );
 
@@ -140,7 +140,7 @@ describe('StudentDisplay', () => {
           students={mockStudents}
           currentIndex={0}
           isAnimating={false}
-          finalStudent={mockStudents[0]}
+          finalStudent={mockStudents[0]!}
         />
       );
 
