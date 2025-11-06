@@ -68,7 +68,8 @@ export const useClassStore = create<ClassStoreState>()(
       ...initialState,
 
       createClass: (name: string) => {
-        const classId = `class_${Date.now()}`;
+        // Use crypto.randomUUID() for truly unique IDs (prevents collisions)
+        const classId = `class_${crypto.randomUUID()}`;
         const newClass: ClassData = {
           id: classId,
           name,
