@@ -157,17 +157,15 @@ export const useClassStore = create<ClassStoreState>()(
             if (studentIndex !== -1) {
               const newStudents = [...classData.students];
               const currentStudent = newStudents[studentIndex];
-              if (currentStudent) {
-                newStudents[studentIndex] = {
-                  ...currentStudent,
-                  absent: !currentStudent.absent,
-                };
-                classes.set(classId, {
-                  ...classData,
-                  students: newStudents,
-                  updatedAt: Date.now(),
-                });
-              }
+              newStudents[studentIndex] = {
+                ...currentStudent,
+                absent: !currentStudent.absent,
+              };
+              classes.set(classId, {
+                ...classData,
+                students: newStudents,
+                updatedAt: Date.now(),
+              });
             }
           }
           return { classes };
