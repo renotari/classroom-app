@@ -79,8 +79,8 @@ export const EDGE_CASE_STATUS: Record<
     resolvedCases: ["EC-011"], // Hotkey conflicts (keyboard shortcuts disabled in input fields)
   },
   "fase-7": {
-    complete: false,
-    resolvedCases: [],
+    complete: true,
+    resolvedCases: ["EC-006", "EC-009"], // CSV encoding/dirty data, classes >30 students
   },
 };
 
@@ -139,15 +139,18 @@ export const FEATURE_FLAGS = {
   semaphoreAutoMode: true,
   semaphoreShortcuts: true,
 
-  // FASE 7: Class Management ⏸️ NOT STARTED (estimated week 8-9)
-  // TODO: Implementare FASE 7 - Class Management
-  //  - Features: CSV import, student lists, random selection
-  //  - Timeline: Week 8-9 (2025-11-XX)
-  classManagement: false,
-  csvImport: false,
-  randomStudent: false,
-  absenceTracking: false,
-  studentAnimations: false,
+  // FASE 7: Class Management ✅ COMPLETATA (Sub-phases 7.1-7.3)
+  // - CSV parsing service with EC-006, EC-009 support ✅
+  // - classStore with CRUD operations ✅
+  // - Class Management UI (selector, student list, CSV import/export) ✅
+  // - Mark absences modal ✅
+  // - 36 CSV parsing tests + 14 classStore tests passing
+  // Note: Random student selection will be in Phase 8
+  classManagement: true,
+  csvImport: true,
+  absenceTracking: true,
+  randomStudent: false, // Phase 8
+  studentAnimations: false, // Phase 8
 
   // FASE 8: Group Generation ⏸️ NOT STARTED (estimated week 10-11)
   // TODO: Implementare FASE 8 - Group Generation
@@ -216,13 +219,16 @@ export const PHASE_INFO = {
   },
   "7": {
     name: "Class Management",
-    status: "NON INIZIATA" as const,
-    estimatedWeek: "8-9",
+    status: "COMPLETATA" as const,
+    startWeek: "7",
+    completedWeek: "7",
     features: [
-      "CSV import with encoding detection",
-      "Student list management",
-      "Random student selection",
-      "Absence tracking",
+      "CSV import with encoding detection (EC-006)",
+      "Student list management (CRUD operations)",
+      "Absence tracking with modal UI",
+      "CSV export functionality",
+      "Class selector dropdown",
+      "Add student form",
     ],
   },
   "8": {

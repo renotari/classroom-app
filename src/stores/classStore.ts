@@ -7,13 +7,14 @@
  * - Absence tracking
  * - Import/export states
  *
- * TODO: Implement in FASE 7
+ * IMPLEMENTED: FASE 7
  * Reference: docs/technical-spec.md section Class Management
  * Reference: docs/edge-cases.md EC-006, EC-009
  */
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { parseCSV, exportToCSV as exportCSVService } from '../services/csvParsingService';
 
 export interface Student {
   id: string;
@@ -101,8 +102,11 @@ export const useClassStore = create<ClassStoreState>()(
           const classes = new Map(state.classes);
           const classData = classes.get(classId);
           if (classData) {
-            classData.students.push(student);
-            classData.updatedAt = Date.now();
+            classes.set(classId, {
+              ...classData,
+              students: [...classData.students, student],
+              updatedAt: Date.now(),
+            });
           }
           return { classes };
         });
@@ -113,8 +117,11 @@ export const useClassStore = create<ClassStoreState>()(
           const classes = new Map(state.classes);
           const classData = classes.get(classId);
           if (classData) {
-            classData.students = classData.students.filter((s) => s.id !== studentId);
-            classData.updatedAt = Date.now();
+            classes.set(classId, {
+              ...classData,
+              students: classData.students.filter((s) => s.id !== studentId),
+              updatedAt: Date.now(),
+            });
           }
           return { classes };
         });
@@ -127,8 +134,13 @@ export const useClassStore = create<ClassStoreState>()(
           if (classData) {
             const index = classData.students.findIndex((s) => s.id === student.id);
             if (index !== -1) {
-              classData.students[index] = student;
-              classData.updatedAt = Date.now();
+              const newStudents = [...classData.students];
+              newStudents[index] = student;
+              classes.set(classId, {
+                ...classData,
+                students: newStudents,
+                updatedAt: Date.now(),
+              });
             }
           }
           return { classes };
@@ -140,24 +152,65 @@ export const useClassStore = create<ClassStoreState>()(
           const classes = new Map(state.classes);
           const classData = classes.get(classId);
           if (classData) {
-            const student = classData.students.find((s) => s.id === studentId);
-            if (student) {
-              student.absent = !student.absent;
-              classData.updatedAt = Date.now();
+            const studentIndex = classData.students.findIndex((s) => s.id === studentId);
+            if (studentIndex !== -1) {
+              const newStudents = [...classData.students];
+              const currentStudent = newStudents[studentIndex];
+              newStudents[studentIndex] = {
+                ...currentStudent,
+                absent: !currentStudent.absent,
+              };
+              classes.set(classId, {
+                ...classData,
+                students: newStudents,
+                updatedAt: Date.now(),
+              });
             }
           }
           return { classes };
         });
       },
 
-      importFromCSV: async (_classId: string, _csvText: string) => {
+      importFromCSV: async (classId: string, csvText: string) => {
         set({ importInProgress: true, importError: null });
         try {
-          // TODO: Implement CSV parsing with Papaparse
-          // Expected format: name,email (optional)
-          // Should handle encoding detection (EC-006)
-          // Should validate max 30 students (EC-009)
-          set({ importInProgress: false });
+          // Parse CSV using csvParsingService (handles EC-006, EC-009)
+          const parseResult = parseCSV(csvText);
+
+          if (!parseResult.success || parseResult.students.length === 0) {
+            const errorMsg = parseResult.errors.join(', ') || 'Nessun studente valido trovato';
+            set({
+              importInProgress: false,
+              importError: errorMsg,
+            });
+            throw new Error(errorMsg);
+          }
+
+          // Get current class
+          const state = get();
+          const classes = new Map(state.classes);
+          const classData = classes.get(classId);
+
+          if (!classData) {
+            set({
+              importInProgress: false,
+              importError: 'Classe non trovata',
+            });
+            throw new Error('Classe non trovata');
+          }
+
+          // Replace students with imported students
+          classes.set(classId, {
+            ...classData,
+            students: parseResult.students,
+            updatedAt: Date.now(),
+          });
+
+          set({
+            classes,
+            importInProgress: false,
+            importError: null,
+          });
         } catch (error) {
           set({
             importInProgress: false,
@@ -172,19 +225,47 @@ export const useClassStore = create<ClassStoreState>()(
         const classData = state.classes.get(classId);
         if (!classData) return '';
 
-        // CSV format: name,absent
-        const header = 'Name,Absent';
-        const rows = classData.students.map((s) => `${s.name},${s.absent ? 'yes' : 'no'}`);
-        return [header, ...rows].join('\n');
+        // Export using csvParsingService
+        return exportCSVService(classData.students, {
+          includeAbsent: true,
+          includeNotes: true,
+          delimiter: ',',
+        });
       },
 
       resetState: () => {
-        set(initialState);
+        set({
+          activeClassId: null,
+          classes: new Map(),
+          importInProgress: false,
+          importError: null,
+        });
       },
     }),
     {
       name: 'class-store',
       version: 1,
+      storage: {
+        getItem: (name) => {
+          const str = localStorage.getItem(name);
+          if (!str) return null;
+          const { state } = JSON.parse(str);
+          // Convert classes array back to Map
+          if (state.classes && Array.isArray(state.classes)) {
+            state.classes = new Map(state.classes);
+          }
+          return { state };
+        },
+        setItem: (name, value) => {
+          // Convert Map to array for JSON serialization
+          const state = {
+            ...value.state,
+            classes: Array.from(value.state.classes.entries()),
+          };
+          localStorage.setItem(name, JSON.stringify({ state }));
+        },
+        removeItem: (name) => localStorage.removeItem(name),
+      },
     }
   )
 );
