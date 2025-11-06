@@ -12,7 +12,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Student } from '../types';
+import type { Student } from './classStore';
 import {
   selectRandomStudent,
   DEFAULT_SELECTION_CONFIG,

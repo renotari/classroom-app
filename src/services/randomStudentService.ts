@@ -10,7 +10,7 @@
  * @module randomStudentService
  */
 
-import type { Student } from '../types';
+import type { Student } from '../stores/classStore';
 
 /**
  * Configuration for random student selection
@@ -71,7 +71,7 @@ export function getSecureRandomIndex(max: number): number {
   crypto.getRandomValues(randomBuffer);
 
   // Convert to range [0, max)
-  return randomBuffer[0] % max;
+  return randomBuffer[0]! % max;
 }
 
 /**
@@ -169,7 +169,7 @@ export function selectRandomStudent(
 
   // Step 3: Cryptographically secure random selection
   const randomIndex = getSecureRandomIndex(pool.length);
-  const selectedStudent = pool[randomIndex];
+  const selectedStudent = pool[randomIndex]!; // getSecureRandomIndex ensures valid index
 
   // Step 4: Return detailed result
   return {

@@ -21,6 +21,7 @@ import { AudioPanel } from '../Audio/AudioPanel';
 import { NoiseMeterPanel } from '../NoiseMeter/NoiseMeterPanel';
 import { SemaphorePanel } from '../Semaphore/SemaphorePanel';
 import { ClassManagementPanel } from '../ClassManagement';
+import { RandomStudentPanel } from '../RandomStudent';
 
 export function MainLayout() {
   const [activeTab, setActiveTab] = useState<TabId>('timer');
@@ -148,11 +149,20 @@ function DisabledFeaturePlaceholder({
 }
 
 /**
- * Stub implementations for Phase 8+ features
- * These will be replaced with actual components when feature flags are enabled
+ * Tools Implementation
+ * Shows available tools based on feature flags:
+ * - Random Student (Phase 8)
+ * - Group Generation (Phase 9)
+ * - Dice Roller (Phase 11)
  */
 function ToolsImplementation() {
-  // TODO: Implement Tools panel with Random Student, Groups, Dice in Phases 8-11
+  // For now, show Random Student if enabled
+  // In future phases, this will be a tabbed interface with multiple tools
+  if (FEATURE_FLAGS.randomStudent) {
+    return <RandomStudentPanel />;
+  }
+
+  // Placeholder for when no tools are enabled
   return (
     <DisabledFeaturePlaceholder
       feature="Tools (Random Student, Groups, Dice)"

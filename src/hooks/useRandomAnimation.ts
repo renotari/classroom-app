@@ -121,7 +121,7 @@ export function useRandomAnimation(
     if (typeof config.easing === 'function') {
       return config.easing;
     }
-    return EASING_FUNCTIONS[config.easing] || EASING_FUNCTIONS['ease-out'];
+    return EASING_FUNCTIONS[config.easing] || EASING_FUNCTIONS['ease-out']!;
   }, [config.easing]);
 
   /**
@@ -254,7 +254,7 @@ export function calculateIndexAtProgress(
   progress: number,
   totalItems: number,
   finalIndex: number,
-  easing: EasingFunction = EASING_FUNCTIONS['ease-out']
+  easing: EasingFunction = EASING_FUNCTIONS['ease-out']!
 ): number {
   const easedProgress = easing(progress);
   const cycleSpeed = 1 - easedProgress;

@@ -13,7 +13,7 @@
  * - Error handling
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import {
   useRandomStudentStore,
@@ -23,8 +23,7 @@ import {
   useIsAnimating,
   useSelectionResult,
 } from '../../../stores/randomStudentStore';
-import { useClassStore } from '../../../stores/classStore';
-import type { Student } from '../../../types';
+import { useClassStore, type Student } from '../../../stores/classStore';
 import { DEFAULT_SELECTION_CONFIG } from '../../../services/randomStudentService';
 
 // Test fixtures
@@ -206,10 +205,10 @@ describe('randomStudentStore', () => {
     });
 
     it('should throw error if no active class', async () => {
-      // Clear active class
+      // Reset class store to have no active class
       const classStore = renderHook(() => useClassStore());
       act(() => {
-        classStore.result.current.selectClass(null);
+        classStore.result.current.resetState();
       });
 
       const { result } = renderHook(() => useRandomStudentStore());

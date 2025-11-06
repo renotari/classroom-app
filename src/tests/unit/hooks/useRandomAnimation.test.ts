@@ -17,7 +17,6 @@ import {
   useRandomAnimation,
   EASING_FUNCTIONS,
   calculateIndexAtProgress,
-  type UseRandomAnimationOptions,
 } from '../../../hooks/useRandomAnimation';
 
 describe('useRandomAnimation', () => {
@@ -449,19 +448,19 @@ describe('useRandomAnimation', () => {
     });
 
     it('should have linear easing return input', () => {
-      expect(EASING_FUNCTIONS.linear(0)).toBe(0);
-      expect(EASING_FUNCTIONS.linear(0.5)).toBe(0.5);
-      expect(EASING_FUNCTIONS.linear(1)).toBe(1);
+      expect(EASING_FUNCTIONS.linear!(0)).toBe(0);
+      expect(EASING_FUNCTIONS.linear!(0.5)).toBe(0.5);
+      expect(EASING_FUNCTIONS.linear!(1)).toBe(1);
     });
 
     it('should have ease-in accelerate', () => {
-      const easeIn = EASING_FUNCTIONS['ease-in'];
+      const easeIn = EASING_FUNCTIONS['ease-in']!;
       expect(easeIn(0.5)).toBeLessThan(0.5); // Slower start
       expect(easeIn(1)).toBe(1);
     });
 
     it('should have ease-out decelerate', () => {
-      const easeOut = EASING_FUNCTIONS['ease-out'];
+      const easeOut = EASING_FUNCTIONS['ease-out']!;
       expect(easeOut(0.5)).toBeGreaterThan(0.5); // Faster start, slower end
       expect(easeOut(1)).toBe(1);
     });

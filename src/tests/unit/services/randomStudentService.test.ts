@@ -8,8 +8,8 @@
  * - Randomness distribution
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { Student } from '../../../types';
+import { describe, it, expect, vi } from 'vitest';
+import type { Student } from '../../../stores/classStore';
 import {
   selectRandomStudent,
   getSecureRandomIndex,
